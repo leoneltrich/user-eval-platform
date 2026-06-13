@@ -16,7 +16,17 @@ class ContainerManager:
     """Manages active container sessions, including creation, inspection, and lifecycle cleanup."""
     def __init__(self):
         try:
-            self.client = docker.from_env()
+            import os
+            # Automatically fall back to rootless docker socket if DOCKER_HOST is not set
+            if "DOCKER_HOST" not in os.environ:
+                uid = os.getuid()
+                rootless_socket = f"/run/user/{uid}/docker.sock"
+                if os.path.exists(rootless_socket):
+                    self.client = docker.DockerClient(base_url=f"unix://{rootless_socket}")
+                else:
+                    self.client = docker.from_env()
+            else:
+                self.client = docker.from_env()
         except Exception as e:
             logger.error(f"Failed to initialize Docker SDK client: {e}")
             raise e

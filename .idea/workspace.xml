@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated networking security">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="revised strict email checks">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
@@ -53,7 +53,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1781309446607</updated>
-      <workItem from="1781309447624" duration="13053000" />
+      <workItem from="1781309447624" duration="14760000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -135,7 +135,31 @@
       <option name="project" value="LOCAL" />
       <updated>1781356540089</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Initial mail tracking">
+      <option name="closed" value="true" />
+      <created>1781359200976</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1781359200976</updated>
+    </task>
+    <task id="LOCAL-00012" summary="revised design">
+      <option name="closed" value="true" />
+      <created>1781359425773</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1781359425773</updated>
+    </task>
+    <task id="LOCAL-00013" summary="revised strict email checks">
+      <option name="closed" value="true" />
+      <created>1781359486396</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1781359486396</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,13 +170,15 @@
     <MESSAGE value="Initial darft" />
     <MESSAGE value="fixed terminal issues" />
     <MESSAGE value="Removed gvisor hints" />
-    <MESSAGE value="revised design" />
     <MESSAGE value="revised header" />
     <MESSAGE value="revised sandbox header" />
     <MESSAGE value="Revised design" />
     <MESSAGE value="docker rootless resilience" />
     <MESSAGE value="updated networking security" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated networking security" />
+    <MESSAGE value="Initial mail tracking" />
+    <MESSAGE value="revised design" />
+    <MESSAGE value="revised strict email checks" />
+    <option name="LAST_COMMIT_MESSAGE" value="revised strict email checks" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

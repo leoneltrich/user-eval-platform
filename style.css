@@ -40,19 +40,6 @@ header.main-header {
   text-align: center;
   z-index: 10;
   gap: 8px;
-  position: relative;
-}
-
-@media (max-width: 768px) {
-  header.main-header {
-    padding-top: 64px; /* Leave space for the absolute user badge at the top */
-  }
-  .user-badge {
-    position: absolute;
-    top: 16px;
-    right: 50% !important;
-    transform: translateX(50%); /* Center at the top on small viewports */
-  }
 }
 
 header.main-header h1 {
@@ -420,53 +407,21 @@ header.main-header .app-subtitle {
   margin-bottom: 28px;
 }
 
-/* User Badge in Header - Subtle & Adhering to color scheme */
-.user-badge {
-  position: absolute;
-  top: 24px;
-  right: 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-secondary);
-  color: var(--text-light);
-  border: 1.5px solid var(--border-color);
-  padding: 6px 14px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  box-shadow: 0 4px 14px rgba(79, 77, 177, 0.2);
-  transition: all 0.2s ease;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.user-badge:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(79, 77, 177, 0.25);
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
-.logout-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-light);
+/* Subtle Interactive User Email inside Terminal Header */
+.user-email-display {
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-left: 10px;
+  font-weight: normal;
   cursor: pointer;
-  margin-left: 6px;
-  opacity: 0.6;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+  border-bottom: 1.5px dashed rgba(255, 255, 255, 0.2);
+  padding-bottom: 1px;
 }
 
-.logout-btn:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.15);
-  transform: scale(1.1);
+.user-email-display:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-bottom-color: rgba(255, 255, 255, 0.65);
 }
 
 /* Fullscreen Solid Background Login Overlay */

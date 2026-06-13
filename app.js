@@ -305,9 +305,7 @@ function checkUserEmail() {
     const emailModal = document.getElementById('email-modal');
     const emailForm = document.getElementById('email-form');
     const emailInput = document.getElementById('email-input');
-    const userBadge = document.getElementById('user-badge');
     const emailDisplay = document.getElementById('user-email-display');
-    const logoutBtn = document.getElementById('logout-btn');
 
     // 1. Try to extract from URL params (?email=...)
     const urlParams = new URLSearchParams(window.location.search);
@@ -339,11 +337,11 @@ function checkUserEmail() {
         });
     }
 
-    // Logout button resets email preference
-    logoutBtn.addEventListener('click', () => {
+    // Clicking the email display resets email preference (acting as logout/change email)
+    emailDisplay.addEventListener('click', () => {
         localStorage.removeItem('user_email');
         userEmail = null;
-        userBadge.style.display = 'none';
+        emailDisplay.textContent = '';
         
         // Disconnect and clean up current session
         if (socket) {
@@ -369,11 +367,9 @@ function setUserEmail(email) {
     userEmail = email;
     localStorage.setItem('user_email', email);
     
-    // Update UI badge
-    const userBadge = document.getElementById('user-badge');
+    // Update terminal title display with formatted email
     const emailDisplay = document.getElementById('user-email-display');
-    emailDisplay.textContent = email;
-    userBadge.style.display = 'flex';
+    emailDisplay.textContent = `• ${email}`;
     
     // Provision sandbox terminal now that email is configured
     initTerminalSession();

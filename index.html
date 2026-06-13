@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Meta Tags -->
+    <title>Interactive Quiz &amp; Sandboxed gVisor Terminal Platform</title>
+    <meta name="description" content="Test your cloud systems and command line skills with interactive quizzes and an instant, secure, gVisor-sandboxed terminal console.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+    <!-- CSS styling links -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+
+    <!-- CDN dependencies: Xterm.js and FitAddon -->
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+</head>
+<body>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <h1 id="app-title">⚡ Quiz Sandbox Platform</h1>
+        <div id="connection-status" class="badge connecting">
+            <div class="pulse-dot"></div>
+            <span id="status-text">Provisioning...</span>
+        </div>
+    </header>
+
+    <!-- Split Pane Workspace -->
+    <main class="split-container" id="main-workspace">
+        
+        <!-- Left Side: Interactive Quiz -->
+        <section class="pane quiz-pane" aria-label="Interactive Quiz Pane" id="quiz-pane">
+            <div class="quiz-card" id="quiz-card">
+                <!-- Loaded dynamically via app.js -->
+                <p>Loading Quiz Module...</p>
+            </div>
+        </section>
+
+        <!-- Right Side: gVisor Sandboxed Terminal -->
+        <section class="pane terminal-pane" aria-label="Sandboxed Terminal Pane" id="terminal-pane">
+            <div class="terminal-header" id="terminal-header">
+                <div class="terminal-title">gVisor Sandbox (runsc)</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); font-family: monospace;">Alpine Linux VM</div>
+            </div>
+            <div class="terminal-wrapper" id="terminal-wrapper">
+                <div id="terminal"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Main JavaScript Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

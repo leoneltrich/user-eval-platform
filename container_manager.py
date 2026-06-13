@@ -3,7 +3,7 @@ import uuid
 import docker
 from typing import Dict, Optional
 from pydantic import BaseModel
-from config import DOCKER_IMAGE, DOCKER_RUNTIME, CONTAINER_MEM_LIMIT, CONTAINER_CPU_LIMIT, CONTAINER_USER
+from config import DOCKER_IMAGE, DOCKER_RUNTIME, CONTAINER_MEM_LIMIT, CONTAINER_CPU_LIMIT, CONTAINER_USER, SANDBOX_NETWORK_NAME
 
 logger = logging.getLogger("orchestrator.manager")
 
@@ -32,6 +32,7 @@ class ContainerManager:
             raise e
         # In-memory session tracking: session_id -> session details dict
         self._sessions: Dict[str, dict] = {}
+        self._setup_sandbox_network()
 
     def create_session(self) -> ContainerSession:
         """Spins up a sandboxed, resource-constrained container using gVisor (runsc) and maps ttyd to local interface."""
@@ -45,6 +46,7 @@ class ContainerManager:
             container = self.client.containers.run(
                 image=DOCKER_IMAGE,
                 runtime=DOCKER_RUNTIME,
+                network=SANDBOX_NETWORK_NAME,  # Connect to isolated network
                 ports={'7681/tcp': ('127.0.0.1', 0)},  # Bind to an ephemeral port on loopback interface
                 mem_limit=CONTAINER_MEM_LIMIT,
                 nano_cpus=nano_cpus,
@@ -114,3 +116,53 @@ class ContainerManager:
             except Exception as e:
                 logger.warning(f"Error stopping container for session {session_id}: {e}")
         return True
+
+    def _setup_sandbox_network(self):
+        """Idempotently recreates the sandbox network on startup."""
+        try:
+            net = self.client.networks.get(SANDBOX_NETWORK_NAME)
+            logger.info(f"Removing existing network: {SANDBOX_NETWORK_NAME}")
+            net.remove()
+        except docker.errors.NotFound:
+            pass
+        except Exception as e:
+            logger.warning(f"Could not remove network {SANDBOX_NETWORK_NAME}: {e}")
+
+        logger.info(f"Creating isolated sandbox network: {SANDBOX_NETWORK_NAME}")
+        try:
+            self.client.networks.create(
+                name=SANDBOX_NETWORK_NAME,
+                driver="bridge",
+                options={
+                    "com.docker.network.bridge.enable_icc": "false"  # Disables container-to-container traffic
+                }
+            )
+        except Exception as e:
+            # Fallback for rootless environments missing br_netfilter/iptables bridge configurations
+            if "restrict inter-container communication" in str(e) or "bridge-nf-call-iptables" in str(e):
+                logger.warning(
+                    f"Rootless environment does not support ICC restriction (enable_icc=false). "
+                    f"Falling back to basic sandbox network. Error: {e}"
+                )
+                try:
+                    self.client.networks.create(
+                        name=SANDBOX_NETWORK_NAME,
+                        driver="bridge"
+                    )
+                except Exception as ex:
+                    logger.error(f"Failed to create basic sandbox network: {ex}")
+                    raise ex
+            else:
+                logger.error(f"Failed to create sandbox network: {e}")
+                raise e
+
+    def clean_up_network(self):
+        """Removes the custom sandbox network."""
+        try:
+            net = self.client.networks.get(SANDBOX_NETWORK_NAME)
+            logger.info(f"Cleaning up sandbox network: {SANDBOX_NETWORK_NAME}")
+            net.remove()
+        except docker.errors.NotFound:
+            pass
+        except Exception as e:
+            logger.warning(f"Failed to clean up sandbox network {SANDBOX_NETWORK_NAME}: {e}")

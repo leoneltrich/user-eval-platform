@@ -11,7 +11,18 @@ from container_manager import ContainerManager
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("orchestrator.main")
 
-app = FastAPI(title="Quiz Terminal Orchestrator API")
+# Instantiate the container manager
+container_manager = ContainerManager()
+
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    logger.info("Cleaning up sandbox network on shutdown...")
+    container_manager.clean_up_network()
+
+app = FastAPI(title="Quiz Terminal Orchestrator API", lifespan=lifespan)
 
 # Setup CORS middleware
 app.add_middleware(
@@ -21,9 +32,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Instantiate the container manager
-container_manager = ContainerManager()
 
 class SessionStartResponse(BaseModel):
     session_id: str

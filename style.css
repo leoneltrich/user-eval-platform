@@ -519,6 +519,7 @@ header.main-header .app-subtitle {
   color: rgba(255, 255, 255, 0.95);
   line-height: 1.5;
   margin-bottom: 32px;
+  text-align: center;
 }
 
 /* Premium Lock/Safe Close Banner */

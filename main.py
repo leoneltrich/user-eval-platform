@@ -53,15 +53,19 @@ class SessionStartResponse(BaseModel):
 async def start_session(request: SessionStartRequest):
     """Endpoint to trigger the initialization of a new sandboxed container session."""
     try:
-        # 1. Fetch or create the user in the database to load progress indices
-        user_data = await db_manager.get_or_create_user(request.email)
+        # 1. Compute SHA-256 hash of the email address (normalize to lowercase first)
+        import hashlib
+        email_hash = hashlib.sha256(request.email.lower().strip().encode()).hexdigest()
         
-        # Extract the email prefix and truncate to max 12 characters
+        # Fetch or create the user in the database to load progress indices using the hash
+        user_data = await db_manager.get_or_create_user(email_hash)
+        
+        # Extract the email prefix and truncate to max 12 characters (safe from raw email)
         username = request.email.split("@")[0] if "@" in request.email else "student"
         username = username[:12]
         
-        # 2. Pass username and email so we can map sessions to users
-        session = container_manager.create_session(username=username, email=request.email)
+        # 2. Pass username and the email hash (never the raw email) to the container session
+        session = container_manager.create_session(username=username, email=email_hash)
         
         return SessionStartResponse(
             session_id=session.session_id, 
@@ -77,7 +81,7 @@ async def start_session(request: SessionStartRequest):
         )
 
 class ProgressUpdateRequest(BaseModel):
-    email: str = Field(..., max_length=254)
+    session_id: str
     current_task_index: int
     current_question_index: int
     finalize_task_id: Optional[int] = None
@@ -86,23 +90,32 @@ class ProgressUpdateRequest(BaseModel):
 async def update_progress(request: ProgressUpdateRequest):
     """Updates the user progress indices and finalizes a completed task duration."""
     try:
+        session = container_manager.get_session(request.session_id)
+        if not session:
+            raise HTTPException(status_code=400, detail="Invalid session ID")
+        email_hash = session.get("email")
+        if not email_hash:
+            raise HTTPException(status_code=400, detail="No email hash associated with session")
+            
         await db_manager.update_user_progress(
-            email=request.email,
+            email_hash=email_hash,
             current_task_index=request.current_task_index,
             current_question_index=request.current_question_index
         )
         if request.finalize_task_id is not None:
-            await db_manager.finalize_task(request.email, request.finalize_task_id)
+            await db_manager.finalize_task(email_hash, request.finalize_task_id)
         return {"status": "success"}
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Failed to update progress for {request.email}: {e}")
+        logger.error(f"Failed to update progress for session {request.session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to update progress: {str(e)}"
         )
 
 class SurveyResponseRequest(BaseModel):
-    email: str = Field(..., max_length=254)
+    session_id: str
     question_id: int
     question_text: str
     response_type: str
@@ -113,8 +126,15 @@ class SurveyResponseRequest(BaseModel):
 async def save_survey_response(request: SurveyResponseRequest):
     """Saves user's response to a specific survey questionnaire question."""
     try:
+        session = container_manager.get_session(request.session_id)
+        if not session:
+            raise HTTPException(status_code=400, detail="Invalid session ID")
+        email_hash = session.get("email")
+        if not email_hash:
+            raise HTTPException(status_code=400, detail="No email hash associated with session")
+
         await db_manager.save_survey_response(
-            email=request.email,
+            email_hash=email_hash,
             question_id=request.question_id,
             question_text=request.question_text,
             response_type=request.response_type,
@@ -122,12 +142,82 @@ async def save_survey_response(request: SurveyResponseRequest):
             option_index=request.option_index
         )
         return {"status": "success"}
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Failed to save survey response for {request.email}: {e}")
+        logger.error(f"Failed to save survey response for session {request.session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to save survey response: {str(e)}"
         )
+
+
+@app.get("/api/admin/export")
+async def export_telemetry_report(token: str):
+    """
+    Endpoint to retrieve an encrypted, self-decrypting HTML report of all telemetry data.
+    Requires a valid admin authentication token.
+    """
+    import config
+    import json
+    import os
+    import base64
+    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    from fastapi.responses import HTMLResponse
+
+    if token != config.ADMIN_TOKEN:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized admin token."
+        )
+
+    try:
+        # 1. Fetch all telemetry records from DB
+        data = await db_manager.get_all_telemetry_data()
+
+        # 2. Serialize and Encrypt the payload using AES-GCM and PBKDF2
+        serialized_data = json.dumps(data)
+
+        salt = os.urandom(16)
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=100000,
+        )
+        key = kdf.derive(config.EXPORT_PASSWORD.encode())
+
+        aesgcm = AESGCM(key)
+        iv = os.urandom(12)
+        ciphertext_with_tag = aesgcm.encrypt(iv, serialized_data.encode('utf-8'), None)
+
+        b64_ciphertext = base64.b64encode(ciphertext_with_tag).decode('utf-8')
+        b64_salt = base64.b64encode(salt).decode('utf-8')
+        b64_iv = base64.b64encode(iv).decode('utf-8')
+
+        # 3. Read report_template.html
+        with open("report_template.html", "r") as f:
+            template = f.read()
+
+        # 4. Inject payload into the HTML report template
+        html_content = template.replace("{{ ciphertext }}", b64_ciphertext)
+        html_content = html_content.replace("{{ salt }}", b64_salt)
+        html_content = html_content.replace("{{ iv }}", b64_iv)
+
+        headers = {
+            "Content-Disposition": "attachment; filename=telemetry_report.html"
+        }
+        return HTMLResponse(content=html_content, status_code=200, headers=headers)
+
+    except Exception as e:
+        logger.error(f"Failed to generate encrypted telemetry report: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate telemetry report: {str(e)}"
+        )
+
 
 @app.get("/api/sessions")
 async def get_sessions():

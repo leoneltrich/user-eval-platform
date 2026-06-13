@@ -61,7 +61,7 @@ async function saveProgress(finalizeTaskId = null) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: userEmail,
+                session_id: terminalSessionId,
                 current_task_index: currentTaskIndex,
                 current_question_index: currentQuestionIndex,
                 finalize_task_id: finalizeTaskId
@@ -285,7 +285,7 @@ function renderSurvey() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            email: userEmail,
+                            session_id: terminalSessionId,
                             question_id: questionData.id,
                             question_text: questionData.text,
                             response_type: 'choice',
@@ -329,7 +329,7 @@ function renderSurvey() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            email: userEmail,
+                            session_id: terminalSessionId,
                             question_id: questionData.id,
                             question_text: questionData.text,
                             response_type: 'text',

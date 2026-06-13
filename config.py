@@ -15,3 +15,8 @@ DB_USER = os.getenv("DB_USER", "eval_user")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "eval_secure_password_2026")
 DB_NAME = os.getenv("DB_NAME", "evaluation_telemetry")
 
+# Admin Export Configurations
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "admin_super_secret_token_2026")
+EXPORT_PASSWORD = os.getenv("EXPORT_PASSWORD", "admin_report_password_2026")
+
+

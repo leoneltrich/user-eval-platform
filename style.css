@@ -98,7 +98,7 @@ header.main-header .app-subtitle {
 .split-container {
   display: flex;
   flex: 1;
-  height: calc(100vh - 67px);
+  min-height: 0;
   width: 100%;
   padding: 24px;
   gap: 24px;
@@ -168,6 +168,7 @@ header.main-header .app-subtitle {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto;
 }
 
 .progress-container {
@@ -780,5 +781,121 @@ header.main-header .app-subtitle {
   background: rgba(255, 255, 255, 0.12);
   border-color: var(--accent-color);
   box-shadow: 0 0 14px rgba(201, 206, 255, 0.25);
+}
+
+.feedback-text {
+  font-family: inherit;
+  font-size: 1.05rem;
+  text-align: left;
+  opacity: 0.95;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.survey-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+/* Responsive media queries */
+@media (max-width: 1280px) and (min-width: 1025px) {
+  .quiz-pane {
+    max-width: 40%;
+  }
+}
+
+@media (max-width: 1024px) {
+  body {
+    overflow: auto;
+    height: auto;
+  }
+  .split-container {
+    flex-direction: column;
+    height: auto;
+    padding: 16px;
+    gap: 16px;
+  }
+  .pane {
+    height: auto;
+  }
+  .quiz-pane {
+    max-width: 100%;
+    height: auto;
+  }
+  .quiz-card {
+    height: auto;
+  }
+  .terminal-pane {
+    height: 480px;
+  }
+}
+
+@media (max-width: 1024px), (max-height: 800px) {
+  header.main-header {
+    padding: 12px 24px 6px;
+    gap: 4px;
+  }
+  header.main-header h1 {
+    font-size: 1.8rem;
+  }
+  header.main-header .app-subtitle {
+    font-size: 0.95rem;
+  }
+  .quiz-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+  .quiz-question-text {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+  }
+  .options-container {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .option-btn {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+  .feedback-text {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+  .feedback-textarea {
+    min-height: 90px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+  }
+  .survey-content-wrapper {
+    margin-bottom: 12px;
+  }
+  .progress-container {
+    margin-bottom: 12px;
+  }
+  .quiz-question-number {
+    margin-bottom: 6px;
+  }
+  .quiz-footer {
+    padding-top: 10px;
+  }
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  .command-box {
+    margin-top: 10px;
+    margin-bottom: 16px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+  .solution-card {
+    padding: 16px;
+    margin-top: 12px;
+  }
 }
 

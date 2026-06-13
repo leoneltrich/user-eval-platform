@@ -90,13 +90,60 @@ function renderTask() {
     }
 
     if (currentTaskIndex >= tasks.length) {
-        if (surveyQuestions && surveyQuestions.length > 0) {
-            quizMode = 'survey';
-            renderSurvey();
-        } else {
-            quizMode = 'complete';
-            renderResults();
-        }
+        quizMode = 'last_solution';
+        // Render completion page with previous solution button and questionnaire trigger
+        quizCard.innerHTML = `
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 100%"></div>
+            </div>
+            <div class="quiz-question-number">All Simulation Tasks Completed!</div>
+            <h2 class="quiz-question-text">Congratulations!</h2>
+            
+            <p class="feedback-text">
+                You have successfully completed all simulation scenarios. Before proceeding to the survey questionnaire, you can review the solution for the final task.
+            </p>
+
+            <div id="solution-container"></div>
+
+            <div class="quiz-footer">
+                <button class="btn btn-secondary" id="solution-btn">Show Previous Solution</button>
+                <button class="btn btn-primary" id="start-survey-btn">Start Questionnaire</button>
+            </div>
+        `;
+        
+        const solutionBtn = document.getElementById('solution-btn');
+        const solutionContainer = document.getElementById('solution-container');
+        const prevTaskData = tasks[tasks.length - 1]; // Task 3
+
+        solutionBtn.addEventListener('click', () => {
+            if (solutionContainer.innerHTML === '') {
+                // Log view_solution telemetry event
+                sendTelemetryEvent('view_solution', prevTaskData.id);
+
+                solutionContainer.innerHTML = `
+                    <div class="solution-card">
+                        <div class="solution-title">Previous Solution: ${prevTaskData.title}</div>
+                        <div class="solution-text">${prevTaskData.solution}</div>
+                    </div>
+                `;
+                solutionBtn.textContent = 'Hide Previous Solution';
+                solutionBtn.classList.add('active');
+            } else {
+                solutionContainer.innerHTML = '';
+                solutionBtn.textContent = 'Show Previous Solution';
+                solutionBtn.classList.remove('active');
+            }
+        });
+
+        document.getElementById('start-survey-btn').addEventListener('click', async () => {
+            if (surveyQuestions && surveyQuestions.length > 0) {
+                quizMode = 'survey';
+                renderSurvey();
+            } else {
+                quizMode = 'complete';
+                renderResults();
+            }
+        });
         return;
     }
     
@@ -110,7 +157,7 @@ function renderTask() {
         <div class="quiz-question-number">Task ${currentTaskIndex + 1} of ${tasks.length}</div>
         <h2 class="quiz-question-text" id="question-text">${taskData.title}</h2>
         
-        <p class="feedback-text" style="font-family: inherit; font-size: 1.05rem; text-align: left; opacity: 0.95; line-height: 1.5; margin-bottom: 20px;">
+        <p class="feedback-text">
             ${taskData.scenario}
         </p>
 
@@ -230,7 +277,7 @@ function renderSurvey() {
         `;
     } else if (questionData.type === 'text') {
         optionsHtml = `
-            <div class="survey-content-wrapper" style="flex: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 28px;">
+            <div class="survey-content-wrapper">
                 <textarea class="feedback-textarea" id="feedback-input" placeholder="Type your response here..." maxlength="1000"></textarea>
             </div>
         `;

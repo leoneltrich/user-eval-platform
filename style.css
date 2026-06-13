@@ -297,23 +297,15 @@ header.main-header .app-subtitle {
 .quiz-footer {
   display: flex;
   margin-top: auto;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
+  flex-direction: column-reverse;
+  gap: 12px;
   padding-top: 16px;
   border-top: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .quiz-footer .btn {
-  flex: 1 1 160px;
+  width: 100%;
   text-align: center;
-}
-
-.quiz-footer .btn:only-child {
-  margin-left: auto;
-  flex: 0 1 auto;
-  min-width: 160px;
 }
 
 .btn {

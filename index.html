@@ -21,10 +21,7 @@
     <!-- Main Header -->
     <header class="main-header">
         <h1 id="app-title">Tool Evaluation</h1>
-        <div id="connection-status" class="badge connecting">
-            <div class="pulse-dot"></div>
-            <span id="status-text">Provisioning...</span>
-        </div>
+        <p class="app-subtitle">Interactive quiz and sandboxed terminal playground</p>
     </header>
 
     <!-- Split Pane Workspace -->
@@ -42,7 +39,10 @@
         <section class="pane terminal-pane" aria-label="Sandboxed Terminal Pane" id="terminal-pane">
             <div class="terminal-header" id="terminal-header">
                 <div class="terminal-title">Sandbox</div>
-                <div style="font-size: 0.75rem; color: var(--text-secondary); font-family: monospace;">Alpine Linux VM</div>
+                <div id="connection-status" class="badge connecting">
+                    <div class="pulse-dot"></div>
+                    <span id="status-text">Provisioning...</span>
+                </div>
             </div>
             <div class="terminal-wrapper" id="terminal-wrapper">
                 <div id="terminal"></div>

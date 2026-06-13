@@ -30,22 +30,30 @@ body {
   flex-direction: column;
 }
 
-/* Header style inspired by the poster */
 header.main-header {
   background: var(--bg-primary);
-  border-bottom: 2px solid var(--bg-secondary);
-  padding: 16px 32px;
+  padding: 24px 32px 12px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   z-index: 10;
+  gap: 8px;
 }
 
 header.main-header h1 {
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: 2.4rem;
+  font-weight: 800;
   color: var(--bg-secondary);
   letter-spacing: -0.5px;
+}
+
+header.main-header .app-subtitle {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--bg-secondary);
+  opacity: 0.8;
 }
 
 .badge {
@@ -285,7 +293,6 @@ header.main-header h1 {
   box-shadow: none;
 }
 
-/* Terminal Header */
 .terminal-header {
   display: flex;
   justify-content: space-between;
@@ -293,6 +300,41 @@ header.main-header h1 {
   background: rgba(79, 77, 177, 0.4);
   padding: 16px 24px;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.terminal-header .badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  gap: 6px;
+  border-width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.terminal-header .badge.connecting {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.terminal-header .badge.connected {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.terminal-header .badge.disconnected {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.terminal-header .pulse-dot {
+  width: 5px;
+  height: 5px;
 }
 
 .terminal-title {

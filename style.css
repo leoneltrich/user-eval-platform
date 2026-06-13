@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121e;
-  --card-bg: rgba(22, 22, 37, 0.65);
-  --border-color: rgba(255, 255, 255, 0.07);
-  --text-primary: #f8f9fa;
-  --text-secondary: #a0aec0;
-  --accent-color: #7c3aed;
-  --accent-glow: rgba(124, 58, 237, 0.4);
-  --accent-hover: #9061f9;
+  --bg-primary: #C9CEFF;       /* Lighter color from poster */
+  --bg-secondary: #4F4DB1;     /* Darker color from poster */
+  --card-bg: #4F4DB1;          /* Darker color for cards/panes */
+  --card-text: #FFFFFF;        /* Clean white text inside dark cards */
+  --border-color: rgba(255, 255, 255, 0.2);
+  --text-primary: #4F4DB1;     /* Dark purple for headers on light background */
+  --text-light: #FFFFFF;       /* Light text */
+  --accent-color: #C9CEFF;     /* Lighter color for accents inside cards */
+  --accent-glow: rgba(201, 206, 255, 0.4);
   --success-color: #10b981;
   --error-color: #ef4444;
 }
@@ -21,7 +21,7 @@
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Playfair Display', 'Baskerville', 'Georgia', serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   height: 100vh;
@@ -30,11 +30,11 @@ body {
   flex-direction: column;
 }
 
+/* Header style inspired by the poster */
 header.main-header {
-  background: rgba(10, 10, 15, 0.8);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border-color);
-  padding: 12px 24px;
+  background: var(--bg-primary);
+  border-bottom: 2px solid var(--bg-secondary);
+  padding: 16px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -42,60 +42,59 @@ header.main-header {
 }
 
 header.main-header h1 {
-  font-size: 1.25rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--bg-secondary);
+  letter-spacing: -0.5px;
+}
+
+.badge {
+  background: rgba(79, 77, 177, 0.1);
+  color: var(--bg-secondary);
+  border: 1.5px solid var(--bg-secondary);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.badge {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--success-color);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .badge.connecting {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border-color: #d97706;
 }
 
 .badge.disconnected {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.1);
   color: var(--error-color);
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: var(--error-color);
 }
 
 .pulse-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: currentColor;
   animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.9); opacity: 0.6; }
+  0% { transform: scale(0.8); opacity: 0.5; }
   50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(0.8); opacity: 0.5; }
 }
 
 .split-container {
   display: flex;
   flex: 1;
-  height: calc(100vh - 57px);
+  height: calc(100vh - 67px);
   width: 100%;
+  padding: 24px;
+  gap: 24px;
 }
 
 .pane {
@@ -103,40 +102,39 @@ header.main-header h1 {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  overflow-y: auto;
+  border-radius: 24px;         /* Curved border style from the poster cards */
+  overflow: hidden;
 }
 
 .quiz-pane {
-  background-color: var(--bg-primary);
-  border-right: 1px solid var(--border-color);
+  background: var(--bg-primary);
   justify-content: center;
   align-items: center;
 }
 
 .terminal-pane {
-  background-color: var(--bg-secondary);
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-secondary);
+  box-shadow: 0 12px 40px rgba(79, 77, 177, 0.25);
 }
 
-/* Glassmorphism Card for Quiz Content */
+/* Rounded, poster-style container card for the quiz */
 .quiz-card {
   width: 100%;
-  max-width: 600px;
+  height: 100%;
   background: var(--card-bg);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 12px 40px rgba(79, 77, 177, 0.25);
+  color: var(--card-text);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .progress-container {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.15);
   height: 6px;
   border-radius: 3px;
   margin-bottom: 24px;
@@ -146,42 +144,44 @@ header.main-header h1 {
 .progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-hover) 100%);
+  background: var(--accent-color);
   transition: width 0.4s ease;
   box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .quiz-question-number {
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--accent-hover);
+  letter-spacing: 2px;
+  color: var(--accent-color);
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .quiz-question-text {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 24px;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .options-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   margin-bottom: 28px;
+  flex: 1;
+  justify-content: center;
 }
 
 .option-btn {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 16px 20px;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  color: var(--card-text);
+  padding: 18px 24px;
+  border-radius: 16px;         /* Curving as seen in the poster buttons */
   text-align: left;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -191,58 +191,62 @@ header.main-header h1 {
 }
 
 .option-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
 .option-btn.selected {
-  background: rgba(124, 58, 237, 0.15);
-  border-color: var(--accent-color);
-  box-shadow: 0 0 12px rgba(124, 58, 237, 0.2);
+  background: var(--bg-primary);
+  color: var(--bg-secondary);
+  border-color: var(--bg-primary);
+  font-weight: 600;
 }
 
 .option-btn.correct {
-  background: rgba(16, 185, 129, 0.15);
+  background: var(--success-color);
   border-color: var(--success-color);
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+  color: white;
 }
 
 .option-btn.incorrect {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--error-color);
   border-color: var(--error-color);
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+  color: white;
 }
 
 .option-marker {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   transition: all 0.2s ease;
 }
 
 .option-btn.selected .option-marker {
-  border-color: var(--accent-color);
-  background: var(--accent-color);
+  border-color: var(--bg-secondary);
+  background: var(--bg-secondary);
+  color: var(--bg-primary);
 }
 
 .quiz-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 16px;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn {
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 14px 28px;
+  border-radius: 12px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -250,30 +254,32 @@ header.main-header h1 {
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border-color: white;
 }
 
 .btn-primary {
-  background: var(--accent-color);
+  background: var(--bg-primary);
   border: none;
-  color: white;
-  box-shadow: 0 4px 14px var(--accent-glow);
+  color: var(--bg-secondary);
+  box-shadow: 0 4px 14px rgba(201, 206, 255, 0.2);
 }
 
 .btn-primary:hover {
-  background: var(--accent-hover);
+  background: white;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--accent-glow);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
 .btn-primary:disabled {
-  background: rgba(124, 58, 237, 0.4);
+  background: rgba(201, 206, 255, 0.4);
+  color: rgba(79, 77, 177, 0.6);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -284,15 +290,15 @@ header.main-header h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(18, 18, 30, 0.9);
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(79, 77, 177, 0.4);
+  padding: 16px 24px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .terminal-title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--text-light);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -305,15 +311,15 @@ header.main-header h1 {
   height: 8px;
   border-radius: 50%;
   background-color: var(--accent-color);
-  box-shadow: 0 0 6px var(--accent-color);
+  box-shadow: 0 0 8px var(--accent-color);
 }
 
-/* Xterm Container */
+/* Classic terminal emulator viewport is completely isolated from serif fonts */
 .terminal-wrapper {
   flex: 1;
-  padding: 12px;
+  padding: 16px;
   overflow: hidden;
-  background-color: #0f0f15;
+  background-color: #0f0f15;  /* Traditional deep black console background */
 }
 
 #terminal {
@@ -326,48 +332,49 @@ header.main-header h1 {
   width: 8px;
 }
 .xterm-viewport::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
 }
 .xterm-viewport::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 .xterm-viewport::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Score Summary Board */
 .results-card {
   text-align: center;
+  margin: auto;
 }
 
 .score-circle {
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
-  background: rgba(124, 58, 237, 0.1);
-  border: 4px solid var(--accent-color);
-  box-shadow: 0 0 20px var(--accent-glow);
+  background: rgba(255, 255, 255, 0.05);
+  border: 3.5px solid var(--accent-color);
+  box-shadow: 0 0 24px var(--accent-glow);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 24px;
+  margin: 0 auto 28px;
 }
 
 .score-num {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: white;
 }
 
 .score-total {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+  font-size: 0.9rem;
+  color: var(--accent-color);
 }
 
 .feedback-text {
-  font-size: 1.15rem;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 28px;
 }

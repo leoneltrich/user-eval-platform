@@ -457,19 +457,23 @@
             // Calculate Metrics
             document.getElementById('stat-participants').textContent = users.length;
             
-            // Avg Total Time / User
-            let totalTimes = [];
+            // Avg Total Time / User (from first login to last active)
+            let totalEvalTimes = [];
             users.forEach(u => {
-                const userDurs = durations.filter(d => d.user_id === u.id);
-                const sumTime = userDurs.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
-                totalTimes.push(sumTime);
+                const firstLogin = new Date(u.first_login_at);
+                const lastActive = new Date(u.last_active_at);
+                const diffSeconds = Math.round((lastActive - firstLogin) / 1000);
+                if (!isNaN(diffSeconds) && diffSeconds >= 0) {
+                    totalEvalTimes.push(diffSeconds);
+                }
             });
-            const avgTotalSeconds = totalTimes.length > 0 ? Math.round(totalTimes.reduce((sum, t) => sum + t, 0) / totalTimes.length) : 0;
+            const avgTotalSeconds = totalEvalTimes.length > 0 ? Math.round(totalEvalTimes.reduce((sum, t) => sum + t, 0) / totalEvalTimes.length) : 0;
             document.getElementById('stat-avg-total-time').textContent = formatDuration(avgTotalSeconds);
 
-            // Avg Task Time
-            const totalTaskSeconds = durations.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
-            const avgTaskSeconds = durations.length > 0 ? Math.round(totalTaskSeconds / durations.length) : 0;
+            // Avg Task Time (only for actual tasks 1-3)
+            const taskDurations = durations.filter(d => d.task_id >= 1 && d.task_id <= 3);
+            const totalTaskSeconds = taskDurations.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
+            const avgTaskSeconds = taskDurations.length > 0 ? Math.round(totalTaskSeconds / taskDurations.length) : 0;
             document.getElementById('stat-avg-task-time').textContent = formatDuration(avgTaskSeconds);
 
             // Copy and Reveal counts
@@ -690,8 +694,15 @@
                 const userEvents = events.filter(e => e.user_id === user.id);
                 const userResponses = responses.filter(r => r.user_id === user.id);
 
-                const totalUserTime = userDurations.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
-                const avgUserTime = userDurations.length > 0 ? Math.round(totalUserTime / userDurations.length) : 0;
+                // Timings for Tasks 1-3 only
+                const taskDurationsOnly = userDurations.filter(d => d.task_id >= 1 && d.task_id <= 3);
+                const totalTaskTime = taskDurationsOnly.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
+                const avgTaskTime = taskDurationsOnly.length > 0 ? Math.round(totalTaskTime / taskDurationsOnly.length) : 0;
+
+                // Total Evaluation Time (span from first login to last active)
+                const firstLogin = new Date(user.first_login_at);
+                const lastActive = new Date(user.last_active_at);
+                const totalEvalTime = isNaN(firstLogin) || isNaN(lastActive) ? 0 : Math.max(0, Math.round((lastActive - firstLogin) / 1000));
 
                 // Build Durations and Telemetry breakdown per task
                 let taskBreakdownHtml = `
@@ -782,12 +793,16 @@
                                 <h5 class="mb-3 text-secondary" style="font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">User Summary</h5>
                                 <div class="p-3 mb-4 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-secondary">Total Active Time:</span>
-                                        <span><strong>${formatDuration(totalUserTime)}</strong></span>
+                                        <span class="text-secondary">Total Task Time:</span>
+                                        <span><strong>${formatDuration(totalTaskTime)}</strong></span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="text-secondary">Average Task Time:</span>
-                                        <span><strong>${formatDuration(avgUserTime)}</strong></span>
+                                        <span><strong>${formatDuration(avgTaskTime)}</strong></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-secondary">Total Evaluation Time:</span>
+                                        <span><strong>${formatDuration(totalEvalTime)}</strong></span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="text-secondary">Total Command Copies:</span>

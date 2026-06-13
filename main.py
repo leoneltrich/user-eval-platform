@@ -370,6 +370,14 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
                                                 if email and event_type:
                                                     await db_manager.log_telemetry_event(email, task_id, event_type)
                                                     logger.info(f"Logged telemetry event '{event_type}' for user {email} on task {task_id}")
+                                                    
+                                                    # Track active duration on task completion
+                                                    if event_type == "task_complete" and is_tab_active:
+                                                        elapsed = int(time.time() - last_active_start)
+                                                        if task_id and task_id > 0:
+                                                            await db_manager.add_task_duration(email, task_id, elapsed)
+                                                            logger.info(f"Saved completed task {task_id} active duration: {elapsed}s")
+                                                        last_active_start = time.time()
                                         except Exception as e:
                                             logger.error(f"Error handling telemetry signal: {e}")
                                         continue # Do not forward signal to terminal container

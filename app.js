@@ -247,6 +247,7 @@ function renderTask() {
     // Next Task Navigation Action
     document.getElementById('next-btn').addEventListener('click', async () => {
         const completedTaskId = taskData.id;
+        sendTelemetryEvent('task_complete', completedTaskId);
         currentTaskIndex++;
         await saveProgress(completedTaskId);
         renderTask();

@@ -65,7 +65,8 @@ async def get_js():
 async def websocket_proxy(websocket: WebSocket, session_id: str):
     """
     Establish a bidirectional websocket connection bridge between the client browser 
-    and the sandboxed container ttyd instance.
+    and the sandboxed container ttyd instance. Includes a retry mechanism to handle 
+    container boot latency.
     """
     # 1. Look up the session ID to fetch the container's randomized host port
     session = container_manager.get_session(session_id)
@@ -88,64 +89,77 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
 
     target_uri = f"ws://127.0.0.1:{port}/ws"
 
-    # 3. Establish a connection to the container's internal ttyd instance
+    # 3. Establish a connection to the container's internal ttyd instance with retry safety
+    max_retries = 30       # Up to 3 seconds of buffer
+    retry_delay = 0.1      # 100ms intervals
+    
     try:
-        async with websockets.connect(
-            target_uri,
-            subprotocols=[accepted_subprotocol] if accepted_subprotocol else None,
-            ping_interval=None  # Disable websockets package automatic ping to avoid control conflicts
-        ) as target_ws:
-            
-            # Forward messages from the internal container to the client
-            async def forward_to_client():
-                try:
-                    async for message in target_ws:
-                        if isinstance(message, str):
-                            await websocket.send_text(message)
-                        else:
-                            await websocket.send_bytes(message)
-                except Exception as e:
-                    logger.debug(f"Target connection closed or failed for session {session_id}: {e}")
-                finally:
-                    # If this loop terminates, close client websocket to exit the other loop
-                    try:
-                        await websocket.close()
-                    except Exception:
-                        pass
+        for attempt in range(max_retries):
+            try:
+                async with websockets.connect(
+                    target_uri,
+                    subprotocols=[accepted_subprotocol] if accepted_subprotocol else None,
+                    ping_interval=None  # Disable automatic pings
+                ) as target_ws:
+                    logger.info(f"Proxy bridge established to container port {port} on attempt {attempt + 1}")
+                    
+                    # Forward messages from the internal container to the client
+                    async def forward_to_client():
+                        try:
+                            async for message in target_ws:
+                                if isinstance(message, str):
+                                    await websocket.send_text(message)
+                                else:
+                                    await websocket.send_bytes(message)
+                        except Exception as e:
+                            logger.debug(f"Target connection closed or failed for session {session_id}: {e}")
+                        finally:
+                            try:
+                                await websocket.close()
+                            except Exception:
+                                pass
 
-            # Forward messages from the client to the internal container
-            async def forward_to_target():
-                try:
-                    while True:
-                        data = await websocket.receive()
-                        if "text" in data:
-                            await target_ws.send(data["text"])
-                        elif "bytes" in data:
-                            await target_ws.send(data["bytes"])
-                        elif "type" in data and data["type"] == "websocket.disconnect":
-                            break
-                except WebSocketDisconnect:
-                    logger.debug(f"Client disconnected websocket for session {session_id}")
-                except Exception as e:
-                    logger.debug(f"Client connection failed for session {session_id}: {e}")
-                finally:
-                    # If this loop terminates, close target connection to exit the other loop
-                    try:
-                        await target_ws.close()
-                    except Exception:
-                        pass
+                    # Forward messages from the client to the internal container
+                    async def forward_to_target():
+                        try:
+                            while True:
+                                data = await websocket.receive()
+                                if "text" in data:
+                                    await target_ws.send(data["text"])
+                                elif "bytes" in data:
+                                    await target_ws.send(data["bytes"])
+                                elif "type" in data and data["type"] == "websocket.disconnect":
+                                    break
+                        except WebSocketDisconnect:
+                            logger.debug(f"Client disconnected websocket for session {session_id}")
+                        except Exception as e:
+                            logger.debug(f"Client to target connection failed for session {session_id}: {e}")
+                        finally:
+                            try:
+                                await target_ws.close()
+                            except Exception:
+                                pass
 
-            # 4. Bidirectional asynchronous loop bridging the connections
-            await asyncio.gather(
-                forward_to_client(),
-                forward_to_target()
-            )
+                    # Bidirectional asynchronous loop bridging the connections
+                    await asyncio.gather(
+                        forward_to_client(),
+                        forward_to_target()
+                    )
+                
+                # Break out of the retry loop once the connection closes cleanly
+                break
+                
+            except (websockets.exceptions.InvalidHandshake, ConnectionRefusedError, OSError) as e:
+                if attempt == max_retries - 1:
+                    logger.error(f"Failed to connect to container on port {port} after {max_retries} attempts: {e}")
+                    raise e
+                await asyncio.sleep(retry_delay)
 
     except Exception as e:
         logger.error(f"WebSocket proxy bridge error for session {session_id}: {e}")
 
     finally:
-        # 5. Robust cleanup: trigger container stop and remove mapping from state dictionary
+        # 4. Robust cleanup: trigger container stop and remove mapping from state dictionary
         logger.info(f"Vaporizing sandboxed container and closing session state for {session_id}")
         container_manager.remove_session(session_id)
         

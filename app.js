@@ -179,8 +179,8 @@ async function initTerminalSession() {
         sendResize(term.cols, term.rows);
     });
 
-    term.writeln('\x1b[35m=== Ephemeral Sandbox Orchestrator ===\x1b[0m');
-    term.writeln('Contacting container allocation manager...');
+    console.log('=== Ephemeral Sandbox Orchestrator ===');
+    console.log('Contacting container allocation manager...');
 
     try {
         const origin = window.location.origin;
@@ -197,8 +197,8 @@ async function initTerminalSession() {
         const data = await response.json();
         terminalSessionId = data.session_id;
         
-        term.writeln(`Container started. Session ID: \x1b[32m${terminalSessionId}\x1b[0m`);
-        term.writeln('Establishing WebSocket proxy tunnel...');
+        console.log(`Container started. Session ID: ${terminalSessionId}`);
+        console.log('Establishing WebSocket proxy tunnel...');
         
         // Connect websocket proxy
         connectWebSocket(terminalSessionId);
@@ -218,10 +218,10 @@ function connectWebSocket(sessionId) {
     
     socket.onopen = () => {
         updateStatus('connected', 'Connected');
-        term.writeln('\x1b[32mSecure tunnel connected. Spawning shell...\x1b[0m\r\n');
+        console.log('Secure tunnel connected. Spawning shell...');
         
-        // Send ttyd initial Auth packet: '2' prefix
-        socket.send('2' + JSON.stringify({ AuthToken: "" }));
+        // Send ttyd initial Auth packet: raw JSON (starts with '{' matching JSON_DATA opcode)
+        socket.send(JSON.stringify({ AuthToken: "" }));
         
         // Send initial resize packet: '1' prefix
         sendResize(term.cols, term.rows);

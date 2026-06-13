@@ -31,7 +31,7 @@ class ContainerManager:
         nano_cpus = int(CONTAINER_CPU_LIMIT * 1_000_000_000)
 
         try:
-            # Launch container
+            # Launch container with custom prompt environment
             container = self.client.containers.run(
                 image=DOCKER_IMAGE,
                 runtime=DOCKER_RUNTIME,
@@ -40,7 +40,14 @@ class ContainerManager:
                 nano_cpus=nano_cpus,
                 user=CONTAINER_USER,
                 detach=True,
-                auto_remove=True
+                auto_remove=True,
+                working_dir="/tmp",
+                hostname="sandbox",
+                environment={
+                    "PROMPT_COMMAND": "export PS1='student@sandbox:\\w\\$ '",
+                    "PS1": "student@sandbox:\\w\\$ ",
+                    "HOME": "/tmp"
+                }
             )
             
             # Refresh details from API to fetch assigned host port mapping

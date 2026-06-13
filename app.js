@@ -1,34 +1,6 @@
-// Interactive Quiz Questions Array
-const QUIZ_QUESTIONS = [
-  {
-    question: "Which Docker command lists only the active, running containers?",
-    options: ["docker list", "docker ps", "docker show-active", "docker containers"],
-    answer: 1,
-    explanation: "Hint: Try running 'docker ps' in the sandboxed terminal on the right!"
-  },
-  {
-    question: "Which runtime does gVisor use to run processes inside a secure user-space kernel?",
-    options: ["runc", "kata-runtime", "runsc", "crun"],
-    answer: 2,
-    explanation: "Hint: We specified runtime='runsc' in our Docker configuration."
-  },
-  {
-    question: "What is the default configuration file name used by Docker Compose?",
-    options: ["docker-compose.json", "compose.config", "docker-compose.yml", "container-compose.conf"],
-    answer: 2,
-    explanation: "Hint: Compose standard files end with .yml or .yaml extensions."
-  },
-  {
-    question: "Which Linux command displays the current absolute path of the working directory?",
-    options: ["pwd", "dir", "cd", "path"],
-    answer: 0,
-    explanation: "Hint: 'Print Working Directory' - type 'pwd' in your terminal."
-  }
-];
-
-let currentQuestionIndex = 0;
-let score = 0;
-let selectedOptionIndex = null;
+// Global State Variables
+let tasks = [];
+let currentTaskIndex = 0;
 let terminalSessionId = null;
 let socket = null;
 let term = null;
@@ -45,85 +17,129 @@ document.addEventListener('DOMContentLoaded', () => {
     connectionStatus = document.getElementById('connection-status');
     statusText = document.getElementById('status-text');
 
-    // Initialize Quiz
+    // Initialize Quiz flow (fetch tasks from API first)
     initQuiz();
     
     // Check or Prompt for user email before starting session
     checkUserEmail();
 });
 
-// Quiz Interface Handlers
-function initQuiz() {
-    renderQuestion();
+// Quiz / Task Interface Handlers
+async function initQuiz() {
+    try {
+        const response = await fetch('/api/tasks');
+        if (!response.ok) {
+            throw new Error(`Failed to load tasks: HTTP status ${response.status}`);
+        }
+        tasks = await response.json();
+        renderTask();
+    } catch (err) {
+        console.error("Error loading tasks configuration:", err);
+        quizCard.innerHTML = `<p style="color: #ef4444; font-weight: bold;">Error loading tasks: ${err.message}</p>`;
+    }
 }
 
-function renderQuestion() {
-    if (currentQuestionIndex >= QUIZ_QUESTIONS.length) {
+function renderTask() {
+    if (tasks.length === 0) {
+        quizCard.innerHTML = '<p>Loading tasks configuration...</p>';
+        return;
+    }
+
+    if (currentTaskIndex >= tasks.length) {
         renderResults();
         return;
     }
     
-    selectedOptionIndex = null;
-    const questionData = QUIZ_QUESTIONS[currentQuestionIndex];
-    const progressPercent = (currentQuestionIndex / QUIZ_QUESTIONS.length) * 100;
+    const taskData = tasks[currentTaskIndex];
+    const progressPercent = (currentTaskIndex / tasks.length) * 100;
     
     quizCard.innerHTML = `
         <div class="progress-container">
             <div class="progress-bar" style="width: ${progressPercent}%"></div>
         </div>
-        <div class="quiz-question-number">Question ${currentQuestionIndex + 1} of ${QUIZ_QUESTIONS.length}</div>
-        <h2 class="quiz-question-text" id="question-text">${questionData.question}</h2>
-        <div class="options-container">
-            ${questionData.options.map((option, idx) => `
-                <button class="option-btn" data-index="${idx}" id="option-${idx}">
-                    <span>${option}</span>
-                    <div class="option-marker">${String.fromCharCode(65 + idx)}</div>
-                </button>
-            `).join('')}
+        <div class="quiz-question-number">Task ${currentTaskIndex + 1} of ${tasks.length}</div>
+        <h2 class="quiz-question-text" id="question-text">${taskData.title}</h2>
+        
+        <p class="feedback-text" style="font-family: inherit; font-size: 1.05rem; text-align: left; opacity: 0.95; line-height: 1.5; margin-bottom: 20px;">
+            ${taskData.scenario}
+        </p>
+
+        <div class="command-box">
+            <div class="command-text" id="command-text">${taskData.command}</div>
+            <button class="copy-btn" id="copy-btn">
+                <span id="copy-btn-text">Copy</span>
+            </button>
         </div>
+
+        <div id="solution-container"></div>
+
         <div class="quiz-footer">
-            <button class="btn btn-secondary" id="hint-btn">Hint</button>
-            <button class="btn btn-primary" id="next-btn" disabled>Next Question</button>
+            ${currentTaskIndex > 0 
+              ? `<button class="btn btn-secondary" id="solution-btn">Show Previous Solution</button>` 
+              : `<div></div>`
+            }
+            <button class="btn btn-primary" id="next-btn">Next Task</button>
         </div>
     `;
-    
-    // Option Selection
-    const optionBtns = quizCard.querySelectorAll('.option-btn');
-    optionBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (selectedOptionIndex !== null) return; // Force single selection
-            
-            selectedOptionIndex = parseInt(btn.getAttribute('data-index'));
-            
-            // Mark selection
-            btn.classList.add('selected');
-            
-            const isCorrect = selectedOptionIndex === questionData.answer;
-            if (isCorrect) {
-                btn.classList.remove('selected');
-                btn.classList.add('correct');
-                score++;
+
+    // Copy to clipboard handler
+    const copyBtn = document.getElementById('copy-btn');
+    const copyBtnText = document.getElementById('copy-btn-text');
+    copyBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(taskData.command);
+            copyBtn.classList.add('copied');
+            copyBtnText.textContent = 'Copied!';
+            setTimeout(() => {
+                copyBtn.classList.remove('copied');
+                copyBtnText.textContent = 'Copy';
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy to clipboard:', err);
+            // Fallback for browsers that block clipboard write
+            const textArea = document.createElement("textarea");
+            textArea.value = taskData.command;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            copyBtn.classList.add('copied');
+            copyBtnText.textContent = 'Copied!';
+            setTimeout(() => {
+                copyBtn.classList.remove('copied');
+                copyBtnText.textContent = 'Copy';
+            }, 2000);
+        }
+    });
+
+    // Toggle previous solution handler
+    if (currentTaskIndex > 0) {
+        const solutionBtn = document.getElementById('solution-btn');
+        const solutionContainer = document.getElementById('solution-container');
+        const prevTaskData = tasks[currentTaskIndex - 1];
+
+        solutionBtn.addEventListener('click', () => {
+            if (solutionContainer.innerHTML === '') {
+                solutionContainer.innerHTML = `
+                    <div class="solution-card">
+                        <div class="solution-title">Previous Solution: ${prevTaskData.title}</div>
+                        <div class="solution-text">${prevTaskData.solution}</div>
+                    </div>
+                `;
+                solutionBtn.textContent = 'Hide Previous Solution';
+                solutionBtn.classList.add('active');
             } else {
-                btn.classList.remove('selected');
-                btn.classList.add('incorrect');
-                // Auto-highlight the correct option
-                optionBtns[questionData.answer].classList.add('correct');
+                solutionContainer.innerHTML = '';
+                solutionBtn.textContent = 'Show Previous Solution';
+                solutionBtn.classList.remove('active');
             }
-            
-            // Enable next button navigation
-            document.getElementById('next-btn').removeAttribute('disabled');
         });
-    });
+    }
     
-    // Navigation Action
+    // Next Task Navigation Action
     document.getElementById('next-btn').addEventListener('click', () => {
-        currentQuestionIndex++;
-        renderQuestion();
-    });
-    
-    // Hint Action
-    document.getElementById('hint-btn').addEventListener('click', () => {
-        alert(questionData.explanation);
+        currentTaskIndex++;
+        renderTask();
     });
 }
 
@@ -134,24 +150,20 @@ function renderResults() {
             <div class="progress-bar" style="width: ${finalProgressPercent}%"></div>
         </div>
         <div class="results-card">
-            <div class="score-circle">
-                <div class="score-num">${score}</div>
-                <div class="score-total">out of ${QUIZ_QUESTIONS.length}</div>
+            <div class="score-circle" style="border-color: var(--success-color); box-shadow: 0 0 24px rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 28px;">
+                <div class="score-num" style="font-size: 3rem; color: var(--success-color);">✔</div>
             </div>
-            <h2>Quiz Complete!</h2>
+            <h2>Evaluation Complete!</h2>
             <p class="feedback-text">
-                ${score === QUIZ_QUESTIONS.length 
-                  ? 'Outstanding! You answered all questions correctly.' 
-                  : 'Well done! Keep practicing your shell skills.'}
+                You have successfully completed all command-line simulation scenarios.
             </p>
-            <button class="btn btn-primary" id="restart-btn">Restart Quiz</button>
+            <button class="btn btn-primary" id="restart-btn">Restart Evaluation</button>
         </div>
     `;
     
     document.getElementById('restart-btn').addEventListener('click', () => {
-        currentQuestionIndex = 0;
-        score = 0;
-        initQuiz();
+        currentTaskIndex = 0;
+        renderTask();
     });
 }
 

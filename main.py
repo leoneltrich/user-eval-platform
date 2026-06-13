@@ -61,6 +61,19 @@ async def get_sessions():
     """Debug endpoint to list all currently running terminal sessions."""
     return container_manager.list_sessions()
 
+@app.get("/api/tasks")
+async def get_tasks():
+    """Endpoint to retrieve the list of scenario tasks for the frontend component."""
+    import json
+    try:
+        with open("tasks.json", "r") as f:
+            return json.load(f)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to load tasks: {str(e)}"
+        )
+
 @app.get("/")
 async def get_index():
     """Serves the main frontend landing page."""

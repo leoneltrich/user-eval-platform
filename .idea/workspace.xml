@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="revised user badge">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated to include email prefix in shell">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/container_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/container_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +50,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1781309446607</updated>
-      <workItem from="1781309447624" duration="15806000" />
+      <workItem from="1781309447624" duration="16906000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -167,7 +164,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781362584137</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="updated to include email prefix in shell">
+      <option name="closed" value="true" />
+      <created>1781364699059</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1781364699059</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,7 +192,8 @@
     <MESSAGE value="revised design" />
     <MESSAGE value="revised strict email checks" />
     <MESSAGE value="revised user badge" />
-    <option name="LAST_COMMIT_MESSAGE" value="revised user badge" />
+    <MESSAGE value="updated to include email prefix in shell" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated to include email prefix in shell" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

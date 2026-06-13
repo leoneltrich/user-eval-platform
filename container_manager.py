@@ -34,7 +34,7 @@ class ContainerManager:
         self._sessions: Dict[str, dict] = {}
         self._setup_sandbox_network()
 
-    def create_session(self, username: str = "student") -> ContainerSession:
+    def create_session(self, username: str = "student", email: str = "") -> ContainerSession:
         """Spins up a sandboxed, resource-constrained container using gVisor (runsc) and maps ttyd to local interface."""
         session_id = str(uuid.uuid4())
         
@@ -80,7 +80,8 @@ class ContainerManager:
             self._sessions[session_id] = {
                 "container_id": container.id,
                 "port": host_port,
-                "container": container
+                "container": container,
+                "email": email
             }
             
             logger.info(f"Session {session_id} successfully created: Container {container.id[:12]} mapped to local port {host_port}")

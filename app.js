@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Check or Prompt for user email before starting session
     checkUserEmail();
+
+    // Start active segment tracker (visibility and focus/blur)
+    initVisibilityTracker();
 });
 
 // Quiz / Task Interface Handlers
@@ -48,6 +51,35 @@ async function initQuiz() {
     } catch (err) {
         console.error("Error loading tasks configuration:", err);
         quizCard.innerHTML = `<p style="color: #ef4444; font-weight: bold;">Error loading tasks: ${err.message}</p>`;
+    }
+}
+
+// Telemetry and Progress Sync Helpers
+async function saveProgress(finalizeTaskId = null) {
+    try {
+        await fetch('/api/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: userEmail,
+                current_task_index: currentTaskIndex,
+                current_question_index: currentQuestionIndex,
+                finalize_task_id: finalizeTaskId
+            })
+        });
+    } catch (err) {
+        console.error("Failed to save progress:", err);
+    }
+}
+
+function sendTelemetryEvent(eventType, taskId) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        const payload = JSON.stringify({
+            type: "telemetry_event",
+            event_type: eventType,
+            task_id: taskId
+        });
+        socket.send('2' + payload);
     }
 }
 
@@ -108,6 +140,10 @@ function renderTask() {
             await navigator.clipboard.writeText(taskData.command);
             copyBtn.classList.add('copied');
             copyBtnText.textContent = 'Copied!';
+            
+            // Log copy_command telemetry event
+            sendTelemetryEvent('copy_command', taskData.id);
+
             setTimeout(() => {
                 copyBtn.classList.remove('copied');
                 copyBtnText.textContent = 'Copy';
@@ -123,6 +159,10 @@ function renderTask() {
             document.body.removeChild(textArea);
             copyBtn.classList.add('copied');
             copyBtnText.textContent = 'Copied!';
+            
+            // Log copy_command telemetry event
+            sendTelemetryEvent('copy_command', taskData.id);
+
             setTimeout(() => {
                 copyBtn.classList.remove('copied');
                 copyBtnText.textContent = 'Copy';
@@ -138,6 +178,9 @@ function renderTask() {
 
         solutionBtn.addEventListener('click', () => {
             if (solutionContainer.innerHTML === '') {
+                // Log view_solution telemetry event
+                sendTelemetryEvent('view_solution', prevTaskData.id);
+
                 solutionContainer.innerHTML = `
                     <div class="solution-card">
                         <div class="solution-title">Previous Solution: ${prevTaskData.title}</div>
@@ -155,8 +198,10 @@ function renderTask() {
     }
     
     // Next Task Navigation Action
-    document.getElementById('next-btn').addEventListener('click', () => {
+    document.getElementById('next-btn').addEventListener('click', async () => {
+        const completedTaskId = taskData.id;
         currentTaskIndex++;
+        await saveProgress(completedTaskId);
         renderTask();
     });
 }
@@ -222,7 +267,7 @@ function renderSurvey() {
             });
         });
 
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', async () => {
             if (selectedIndex !== null) {
                 const answerText = questionData.options[selectedIndex];
                 surveyAnswers.push({
@@ -233,7 +278,27 @@ function renderSurvey() {
                     optionIndex: selectedIndex
                 });
                 console.log("Survey answers updated:", surveyAnswers);
+                
+                // Save survey response to database
+                try {
+                    await fetch('/api/survey/response', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: userEmail,
+                            question_id: questionData.id,
+                            question_text: questionData.text,
+                            response_type: 'choice',
+                            response_value: answerText,
+                            option_index: selectedIndex
+                        })
+                    });
+                } catch (err) {
+                    console.error("Failed to save survey answer:", err);
+                }
+
                 currentQuestionIndex++;
+                await saveProgress();
                 renderSurvey();
             }
         });
@@ -247,7 +312,7 @@ function renderSurvey() {
             }
         });
 
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', async () => {
             const val = textarea.value.trim().substring(0, 1000);
             if (val.length > 0) {
                 surveyAnswers.push({
@@ -257,7 +322,27 @@ function renderSurvey() {
                     answer: val
                 });
                 console.log("Survey answers updated:", surveyAnswers);
+
+                // Save survey response to database
+                try {
+                    await fetch('/api/survey/response', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: userEmail,
+                            question_id: questionData.id,
+                            question_text: questionData.text,
+                            response_type: 'text',
+                            response_value: val,
+                            option_index: null
+                        })
+                    });
+                } catch (err) {
+                    console.error("Failed to save survey answer:", err);
+                }
+
                 currentQuestionIndex++;
+                await saveProgress();
                 renderSurvey();
             }
         });
@@ -361,6 +446,21 @@ async function initTerminalSession() {
         
         const data = await response.json();
         terminalSessionId = data.session_id;
+        
+        // Resume task and question indices loaded from database
+        currentTaskIndex = data.current_task_index || 0;
+        currentQuestionIndex = data.current_question_index || 0;
+
+        // If tasks config is already loaded, immediately update UI to correct state
+        if (tasks.length > 0) {
+            if (currentTaskIndex >= tasks.length) {
+                quizMode = 'survey';
+                renderSurvey();
+            } else {
+                quizMode = 'tasks';
+                renderTask();
+            }
+        }
         
         console.log(`Container started. Session ID: ${terminalSessionId}`);
         console.log('Establishing WebSocket proxy tunnel...');
@@ -537,4 +637,42 @@ function setUserEmail(email) {
     
     // Provision sandbox terminal now that email is configured
     initTerminalSession();
+}
+
+// Tab visibility and focus handlers to track active segment timings
+function initVisibilityTracker() {
+    let activeState = true;
+
+    function handleVisibilityChange() {
+        const isVisible = document.visibilityState === 'visible';
+        updateActiveState(isVisible);
+    }
+
+    function handleFocus() {
+        updateActiveState(true);
+    }
+
+    function handleBlur() {
+        updateActiveState(false);
+    }
+
+    function updateActiveState(newState) {
+        if (newState === activeState) return;
+        activeState = newState;
+        
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            // Task IDs are 1-based (Task 1 has index 0). If in survey mode, pass 0.
+            const taskId = (quizMode === 'tasks') ? (tasks[currentTaskIndex]?.id || 0) : 0;
+            const payload = JSON.stringify({
+                type: activeState ? "tab_active" : "tab_inactive",
+                task_id: taskId
+            });
+            socket.send('2' + payload);
+            console.log(`Visibility signal sent: ${activeState ? 'active' : 'inactive'} for task ${taskId}`);
+        }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
 }

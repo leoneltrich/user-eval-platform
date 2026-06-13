@@ -18,6 +18,28 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(0, 0, 0, 0.15);
+}
+
+/* Global Custom Scrollbar Styling (Chrome, Safari, Edge, Opera) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 body {
@@ -198,7 +220,7 @@ header.main-header .app-subtitle {
 }
 
 .quiz-question-text {
-  font-size: 1.5rem;
+  font-size: 1.05rem;
   font-weight: 600;
   margin-bottom: 24px;
   line-height: 1.35;
@@ -318,7 +340,7 @@ header.main-header .app-subtitle {
 
 .btn-primary {
   background: var(--bg-primary);
-  border: none;
+  border: 1.5px solid transparent;
   color: var(--bg-secondary);
   box-shadow: 0 4px 14px rgba(201, 206, 255, 0.2);
 }
@@ -863,7 +885,7 @@ header.main-header .app-subtitle {
     border-radius: 20px;
   }
   .quiz-question-text {
-    font-size: 1.25rem;
+    font-size: 0.95rem;
     margin-bottom: 16px;
   }
   .options-container {

@@ -144,27 +144,38 @@ function renderTask() {
 }
 
 function renderResults() {
+    // 1. Add class "complete" to the main workspace container to trigger CSS transitions
+    const workspace = document.getElementById('main-workspace');
+    if (workspace) {
+        workspace.classList.add('complete');
+    }
+
+    // 2. Safely close any active websocket connection and release resources
+    if (socket) {
+        socket.close();
+    }
+    if (term) {
+        term.dispose();
+        term = null;
+        document.getElementById('terminal').innerHTML = '';
+    }
+
+    // 3. Render the feedback screen thanking the user
     const finalProgressPercent = 100;
     quizCard.innerHTML = `
         <div class="progress-container">
             <div class="progress-bar" style="width: ${finalProgressPercent}%"></div>
         </div>
         <div class="results-card">
-            <div class="score-circle" style="border-color: var(--success-color); box-shadow: 0 0 24px rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 28px;">
-                <div class="score-num" style="font-size: 3rem; color: var(--success-color);">✔</div>
+            <div class="score-circle">
+                <div class="score-num">✔</div>
             </div>
-            <h2>Evaluation Complete!</h2>
+            <h2>Thank You!</h2>
             <p class="feedback-text">
-                You have successfully completed all command-line simulation scenarios.
+                You have successfully completed all simulation scenarios. Thank you for participating in this evaluation!
             </p>
-            <button class="btn btn-primary" id="restart-btn">Restart Evaluation</button>
         </div>
     `;
-    
-    document.getElementById('restart-btn').addEventListener('click', () => {
-        currentTaskIndex = 0;
-        renderTask();
-    });
 }
 
 // Sandbox Provisioning & WebSocket Bridge Setup

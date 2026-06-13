@@ -231,7 +231,6 @@ header.main-header .app-subtitle {
 .option-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
 }
 
 .option-btn.selected {

@@ -32,24 +32,26 @@ body {
 
 header.main-header {
   background: var(--bg-primary);
-  padding: 20px 32px;
+  padding: 24px 32px 12px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  text-align: left;
+  justify-content: center;
+  text-align: center;
   z-index: 10;
-  gap: 16px;
-  border-bottom: 1.5px solid rgba(79, 77, 177, 0.15);
+  gap: 8px;
+  position: relative;
 }
 
 @media (max-width: 768px) {
   header.main-header {
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
+    padding-top: 64px; /* Leave space for the absolute user badge at the top */
+  }
+  .user-badge {
+    position: absolute;
+    top: 16px;
+    right: 50% !important;
+    transform: translateX(50%); /* Center at the top on small viewports */
   }
 }
 
@@ -418,89 +420,89 @@ header.main-header .app-subtitle {
   margin-bottom: 28px;
 }
 
-/* User Badge in Header */
+/* User Badge in Header - Subtle & Adhering to color scheme */
 .user-badge {
+  position: absolute;
+  top: 24px;
+  right: 32px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: white;
-  color: var(--text-primary);
-  border: 1.5px solid var(--bg-secondary);
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  gap: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-light);
+  border: 1.5px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
   font-weight: 500;
-  box-shadow: 0 4px 12px rgba(79, 77, 177, 0.1);
+  box-shadow: 0 4px 14px rgba(79, 77, 177, 0.2);
   transition: all 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .user-badge:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(79, 77, 177, 0.15);
-}
-
-.user-icon {
-  font-size: 1rem;
+  box-shadow: 0 6px 18px rgba(79, 77, 177, 0.25);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .logout-btn {
   background: transparent;
   border: none;
-  color: var(--text-primary);
+  color: var(--text-light);
   font-size: 0.8rem;
   cursor: pointer;
-  margin-left: 4px;
+  margin-left: 6px;
   opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
 }
 
 .logout-btn:hover {
   opacity: 1;
-  background: rgba(79, 77, 177, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   transform: scale(1.1);
 }
 
-/* Modal Overlay Container */
+/* Fullscreen Solid Background Login Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 15, 21, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--bg-primary); /* Solid color matching poster theme */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 
-/* Premium Card inside Modal */
+/* Elegant Solid Login Card */
 .modal-card {
   background: var(--card-bg);
   color: var(--card-text);
   border-radius: 24px;
-  padding: 40px;
+  padding: 48px;
   width: 100%;
   max-width: 440px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(79, 77, 177, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  animation: modalEntrance 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 28px;
+  text-align: center;
+  animation: modalEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalEntrance {
   from {
-    transform: translateY(20px) scale(0.96);
+    transform: translateY(24px) scale(0.95);
     opacity: 0;
   }
   to {
@@ -510,22 +512,24 @@ header.main-header .app-subtitle {
 }
 
 .modal-header h2 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 700;
   margin-bottom: 8px;
+  color: var(--text-light);
+  letter-spacing: -0.5px;
 }
 
 .modal-header p {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 0.95rem;
-  opacity: 0.8;
-  line-height: 1.4;
+  opacity: 0.75;
+  line-height: 1.45;
 }
 
 .modal-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 /* Custom Input Group styling */
@@ -537,20 +541,21 @@ header.main-header .app-subtitle {
 .input-group input {
   width: 100%;
   padding: 16px 20px;
-  border-radius: 14px;
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.08);
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: inherit;
   font-size: 1.05rem;
   outline: none;
   transition: all 0.3s ease;
+  text-align: center; /* Minimal centered text style */
 }
 
 .input-group input:focus {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--bg-primary);
-  box-shadow: 0 0 14px rgba(201, 206, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: white;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
 }
 
 .btn-block {

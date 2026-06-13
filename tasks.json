@@ -26,19 +26,53 @@
     {
       "id": 1,
       "type": "choice",
-      "text": "How would you rate the responsiveness and performance of the gVisor sandboxed terminal?",
+      "text": "In a restricted environment where cloud-based AI cannot be used, this local tool would be a highly effective alternative for complex command options.",
       "options": [
-        "Excellent - indistinguishable from a local machine",
-        "Good - very responsive with minor latency",
-        "Satisfactory - usable but noticeable lag",
-        "Poor - slow command execution and laggy feedback",
-        "Unusable - completely unresponsive"
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
       ]
     },
     {
       "id": 2,
+      "type": "choice",
+      "text": "Based on how well the tool retrieved options for standard commands during the test, I am confident it would successfully help me navigate a niche or internally developed CLI tool.",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },{
+      "id": 3,
+      "type": "choice",
+      "text": "Compared to the alternatives in a restricted environment (e.g., reading internal wikis, checking man pages, or asking a colleague), using this tool would significantly speed up my workflow.",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },{
+      "id": 4,
+      "type": "choice",
+      "text": "If my daily job required interacting with undocumented or proprietary command-line applications, I would actively want this local tool installed on my machine.",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },
+    {
+      "id": 5,
       "type": "text",
-      "text": "Please share your thoughts on the gVisor sandbox isolation. Do you feel this evaluation environment is secure?"
+      "text": "Considering the scenario above, what do you see as the biggest advantage or potential drawback of relying on this specific tool for internal applications?"
     }
   ]
 }

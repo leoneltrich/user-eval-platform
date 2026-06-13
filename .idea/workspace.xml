@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="docker rootless resilience">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated networking security">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/container_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/container_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +53,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1781309446607</updated>
-      <workItem from="1781309447624" duration="11424000" />
+      <workItem from="1781309447624" duration="13053000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -127,7 +127,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781314510261</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="updated networking security">
+      <option name="closed" value="true" />
+      <created>1781356540089</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1781356540089</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -143,7 +151,8 @@
     <MESSAGE value="revised sandbox header" />
     <MESSAGE value="Revised design" />
     <MESSAGE value="docker rootless resilience" />
-    <option name="LAST_COMMIT_MESSAGE" value="docker rootless resilience" />
+    <MESSAGE value="updated networking security" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated networking security" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -32,14 +32,25 @@ body {
 
 header.main-header {
   background: var(--bg-primary);
-  padding: 24px 32px 12px;
+  padding: 20px 32px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  justify-content: space-between;
+  text-align: left;
   z-index: 10;
-  gap: 8px;
+  gap: 16px;
+  border-bottom: 1.5px solid rgba(79, 77, 177, 0.15);
+}
+
+@media (max-width: 768px) {
+  header.main-header {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+  }
 }
 
 header.main-header h1 {
@@ -406,3 +417,147 @@ header.main-header .app-subtitle {
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 28px;
 }
+
+/* User Badge in Header */
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  color: var(--text-primary);
+  border: 1.5px solid var(--bg-secondary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(79, 77, 177, 0.1);
+  transition: all 0.2s ease;
+}
+
+.user-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 77, 177, 0.15);
+}
+
+.user-icon {
+  font-size: 1rem;
+}
+
+.logout-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-left: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+.logout-btn:hover {
+  opacity: 1;
+  background: rgba(79, 77, 177, 0.1);
+  transform: scale(1.1);
+}
+
+/* Modal Overlay Container */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 15, 21, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Premium Card inside Modal */
+.modal-card {
+  background: var(--card-bg);
+  color: var(--card-text);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: modalEntrance 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalEntrance {
+  from {
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.modal-header p {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 0.95rem;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Custom Input Group styling */
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.05rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--bg-primary);
+  box-shadow: 0 0 14px rgba(201, 206, 255, 0.25);
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+

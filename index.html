@@ -20,8 +20,15 @@
 
     <!-- Main Header -->
     <header class="main-header">
-        <h1 id="app-title">Tool Evaluation</h1>
-        <p class="app-subtitle">Natural Language-Based Command Option Retrieval</p>
+        <div class="header-content">
+            <h1 id="app-title">Tool Evaluation</h1>
+            <p class="app-subtitle">Natural Language-Based Command Option Retrieval</p>
+        </div>
+        <div class="user-badge" id="user-badge" style="display: none;">
+            <span class="user-icon">👤</span>
+            <span id="user-email-display"></span>
+            <button id="logout-btn" class="logout-btn" title="Change Email">✕</button>
+        </div>
     </header>
 
     <!-- Split Pane Workspace -->
@@ -49,6 +56,22 @@
         </section>
 
     </main>
+
+    <!-- Email Login Modal Overlay -->
+    <div class="modal-overlay" id="email-modal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Enter Your Email</h2>
+                <p>Please provide your email address to access the evaluation platform.</p>
+            </div>
+            <form id="email-form" class="modal-form">
+                <div class="input-group">
+                    <input type="email" id="email-input" placeholder="name@provider.com" required autocomplete="email">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="submit-email-btn">Start Session</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Main JavaScript Logic -->
     <script src="app.js"></script>

@@ -37,15 +37,19 @@ let fitAddon = null;
 // DOM Elements
 let quizCard, connectionStatus, statusText;
 
+let userEmail = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     // Cache UI elements
     quizCard = document.getElementById('quiz-card');
     connectionStatus = document.getElementById('connection-status');
     statusText = document.getElementById('status-text');
 
-    // Initialize Quiz & Provision Sandbox Terminal
+    // Initialize Quiz
     initQuiz();
-    initTerminalSession();
+    
+    // Check or Prompt for user email before starting session
+    checkUserEmail();
 });
 
 // Quiz Interface Handlers
@@ -294,4 +298,83 @@ function updateStatus(status, label) {
         displayLabel = "Connecting";
     }
     statusText.textContent = displayLabel;
+}
+
+// User Email Check & Modal Handlers
+function checkUserEmail() {
+    const emailModal = document.getElementById('email-modal');
+    const emailForm = document.getElementById('email-form');
+    const emailInput = document.getElementById('email-input');
+    const userBadge = document.getElementById('user-badge');
+    const emailDisplay = document.getElementById('user-email-display');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // 1. Try to extract from URL params (?email=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    let email = urlParams.get('email');
+
+    if (email) {
+        // Clean URL to avoid keeping the query parameter in location bar
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    } else {
+        // 2. Fallback to localStorage
+        email = localStorage.getItem('user_email');
+    }
+
+    if (email && validateEmail(email)) {
+        setUserEmail(email);
+    } else {
+        // 3. Show prompt modal
+        emailModal.style.display = 'flex';
+        emailForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const enteredEmail = emailInput.value.trim();
+            if (validateEmail(enteredEmail)) {
+                emailModal.style.display = 'none';
+                setUserEmail(enteredEmail);
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        });
+    }
+
+    // Logout button resets email preference
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('user_email');
+        userEmail = null;
+        userBadge.style.display = 'none';
+        
+        // Disconnect and clean up current session
+        if (socket) {
+            socket.close();
+        }
+        if (term) {
+            term.dispose();
+            term = null;
+            document.getElementById('terminal').innerHTML = '';
+        }
+        
+        emailInput.value = '';
+        emailModal.style.display = 'flex';
+    });
+}
+
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function setUserEmail(email) {
+    userEmail = email;
+    localStorage.setItem('user_email', email);
+    
+    // Update UI badge
+    const userBadge = document.getElementById('user-badge');
+    const emailDisplay = document.getElementById('user-email-display');
+    emailDisplay.textContent = email;
+    userBadge.style.display = 'flex';
+    
+    // Provision sandbox terminal now that email is configured
+    initTerminalSession();
 }

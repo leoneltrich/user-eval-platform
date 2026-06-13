@@ -7,6 +7,8 @@
     <!-- Modern Typography & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
@@ -219,6 +221,16 @@
             right: 24px;
             z-index: 1050;
         }
+
+        .participant-card:hover {
+            border-color: rgba(201, 206, 255, 0.35) !important;
+            box-shadow: 0 4px 16px rgba(201, 206, 255, 0.08);
+        }
+
+        .btn-outline-custom.active {
+            background: var(--accent-color) !important;
+            color: var(--bg-primary) !important;
+        }
     </style>
 </head>
 <body>
@@ -271,47 +283,80 @@
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="stat-card">
-                    <div class="stat-value" id="stat-avg-time">-</div>
-                    <div class="stat-label">Avg Task Time (total)</div>
+                    <div class="stat-value" id="stat-avg-total-time">-</div>
+                    <div class="stat-label">Avg Total Time / User</div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="stat-card">
-                    <div class="stat-value" id="stat-copies">0</div>
-                    <div class="stat-label">Command Copies</div>
+                    <div class="stat-value" id="stat-avg-task-time">-</div>
+                    <div class="stat-label">Avg Task Time</div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="stat-card">
-                    <div class="stat-value" id="stat-reveals">0</div>
-                    <div class="stat-label">Solution Reveals</div>
+                    <div class="d-flex justify-content-around align-items-center h-100">
+                        <div class="text-center">
+                            <div class="stat-value" id="stat-copies" style="font-size: 1.8rem;">0</div>
+                            <div class="stat-label" style="font-size: 0.75rem;">Copies</div>
+                        </div>
+                        <div style="border-left: 1.5px solid var(--border-color); height: 40px;"></div>
+                        <div class="text-center">
+                            <div class="stat-value" id="stat-reveals" style="font-size: 1.8rem;">0</div>
+                            <div class="stat-label" style="font-size: 0.75rem;">Reveals</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Participants Table -->
-        <div class="panel-card">
-            <div class="panel-title">
-                <span>Evaluation Participants List</span>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-custom">
-                    <thead>
-                        <tr>
-                            <th>Participant Hash</th>
-                            <th>First Login</th>
-                            <th>Last Active</th>
-                            <th>Tasks Progress</th>
-                            <th>Survey Progress</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="participants-table-body">
-                        <!-- Filled dynamically -->
-                    </tbody>
-                </table>
+        <!-- Overall Task Performance Charts -->
+        <div class="panel-card mb-4">
+            <div class="panel-title mb-4">Overall Task Performance Metrics</div>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <h6 class="text-secondary small mb-3">Average Completion Time by Task</h6>
+                        <div style="height: 240px; position: relative;">
+                            <canvas id="chart-tasks-avg-time"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <h6 class="text-secondary small mb-3">Telemetry Events (Copies vs Solution Reveals) by Task</h6>
+                        <div style="height: 240px; position: relative;">
+                            <canvas id="chart-tasks-telemetry"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Dynamic Choice Charts Section -->
+        <div class="panel-card mb-4">
+            <div class="panel-title mb-4">Survey Question Responses Distribution</div>
+            <div id="choice-charts-container" class="row g-4">
+                <!-- Dynamically populated chart cards -->
+            </div>
+        </div>
+
+        <!-- Free Text Responses -->
+        <div class="panel-card mb-4">
+            <div class="panel-title mb-3">Q5 Free-Text Feedback: Advantages / Drawbacks</div>
+            <div class="row g-3" id="text-feedback-container" style="max-height: 320px; overflow-y: auto; padding-right: 4px;">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Participants List Section -->
+        <div class="panel-card">
+            <div class="panel-title mb-4">Evaluation Participants</div>
+            <div id="participants-list" class="d-flex flex-column gap-3">
+                <!-- Dynamically populated card list -->
+            </div>
+        </div>
+    </div>
     </div>
 
     <!-- Hidden download wrappers -->
@@ -412,10 +457,20 @@
             // Calculate Metrics
             document.getElementById('stat-participants').textContent = users.length;
             
-            // Total Active Time sum & average
-            const totalActiveSeconds = durations.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
-            const avgSeconds = users.length > 0 ? Math.round(totalActiveSeconds / users.length) : 0;
-            document.getElementById('stat-avg-time').textContent = formatDuration(avgSeconds);
+            // Avg Total Time / User
+            let totalTimes = [];
+            users.forEach(u => {
+                const userDurs = durations.filter(d => d.user_id === u.id);
+                const sumTime = userDurs.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
+                totalTimes.push(sumTime);
+            });
+            const avgTotalSeconds = totalTimes.length > 0 ? Math.round(totalTimes.reduce((sum, t) => sum + t, 0) / totalTimes.length) : 0;
+            document.getElementById('stat-avg-total-time').textContent = formatDuration(avgTotalSeconds);
+
+            // Avg Task Time
+            const totalTaskSeconds = durations.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
+            const avgTaskSeconds = durations.length > 0 ? Math.round(totalTaskSeconds / durations.length) : 0;
+            document.getElementById('stat-avg-task-time').textContent = formatDuration(avgTaskSeconds);
 
             // Copy and Reveal counts
             const copies = events.filter(e => e.event_type === 'copy_command').length;
@@ -423,94 +478,351 @@
             document.getElementById('stat-copies').textContent = copies;
             document.getElementById('stat-reveals').textContent = reveals;
 
-            // Render Table Rows
-            const tbody = document.getElementById('participants-table-body');
-            tbody.innerHTML = '';
+            // Render Overall Task Performance Charts
+            const tasks = decryptedData.config.tasks || [];
+            const taskLabels = tasks.map(t => `Task ${t.id}: ${t.title}`);
+            
+            // Calculate avg time per task
+            const avgTimePerTask = tasks.map(t => {
+                const taskDurs = durations.filter(d => d.task_id === t.id);
+                if (taskDurs.length === 0) return 0;
+                const total = taskDurs.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
+                return Math.round(total / taskDurs.length);
+            });
 
-            users.forEach((user, index) => {
+            // Calculate copies and reveals per task
+            const copiesPerTask = tasks.map(t => {
+                return events.filter(e => e.task_id === t.id && e.event_type === 'copy_command').length;
+            });
+            const revealsPerTask = tasks.map(t => {
+                return events.filter(e => e.task_id === t.id && e.event_type === 'view_solution').length;
+            });
+
+            // 1. Avg Time per Task Chart
+            const ctxAvgTime = document.getElementById('chart-tasks-avg-time').getContext('2d');
+            if (window.tasksAvgTimeChart) window.tasksAvgTimeChart.destroy();
+            window.tasksAvgTimeChart = new Chart(ctxAvgTime, {
+                type: 'bar',
+                data: {
+                    labels: taskLabels,
+                    datasets: [{
+                        label: 'Average Time (seconds)',
+                        data: avgTimePerTask,
+                        backgroundColor: 'rgba(110, 231, 183, 0.35)',
+                        borderColor: 'rgba(110, 231, 183, 0.85)',
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        hoverBackgroundColor: 'rgba(110, 231, 183, 0.6)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Outfit', size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: 'rgba(255,255,255,0.6)', beginAtZero: true }
+                        }
+                    }
+                }
+            });
+
+            // 2. Telemetry per Task Chart
+            const ctxTelemetry = document.getElementById('chart-tasks-telemetry').getContext('2d');
+            if (window.tasksTelemetryChart) window.tasksTelemetryChart.destroy();
+            window.tasksTelemetryChart = new Chart(ctxTelemetry, {
+                type: 'bar',
+                data: {
+                    labels: taskLabels,
+                    datasets: [
+                        {
+                            label: 'Command Copies',
+                            data: copiesPerTask,
+                            backgroundColor: 'rgba(201, 206, 255, 0.35)',
+                            borderColor: 'rgba(201, 206, 255, 0.85)',
+                            borderWidth: 1.5,
+                            borderRadius: 6,
+                            hoverBackgroundColor: 'rgba(201, 206, 255, 0.6)'
+                        },
+                        {
+                            label: 'Solution Reveals',
+                            data: revealsPerTask,
+                            backgroundColor: 'rgba(244, 63, 94, 0.35)',
+                            borderColor: 'rgba(244, 63, 94, 0.85)',
+                            borderWidth: 1.5,
+                            borderRadius: 6,
+                            hoverBackgroundColor: 'rgba(244, 63, 94, 0.6)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'Outfit', size: 11 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Outfit', size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: 'rgba(255,255,255,0.6)', beginAtZero: true, stepSize: 1 }
+                        }
+                    }
+                }
+            });
+
+            // Render Choice Charts (Q1-Q4 dynamically from config)
+            const choiceQuestions = (decryptedData.config.questions || []).filter(q => q.type === 'choice');
+            const chartsContainer = document.getElementById('choice-charts-container');
+            chartsContainer.innerHTML = '';
+
+            choiceQuestions.forEach(q => {
+                const col = document.createElement('div');
+                col.className = 'col-lg-6';
+                col.innerHTML = `
+                    <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <h6 class="text-secondary small mb-3">Q${q.id}: ${q.text}</h6>
+                        <div style="height: 220px; position: relative;">
+                            <canvas id="chart-q-${q.id}"></canvas>
+                        </div>
+                    </div>
+                `;
+                chartsContainer.appendChild(col);
+
+                // Count answers for this question
+                const counts = Array(q.options.length).fill(0);
+                responses.forEach(r => {
+                    if (r.question_id === q.id && r.option_index !== null && r.option_index < q.options.length) {
+                        counts[r.option_index]++;
+                    }
+                });
+
+                const ctx = document.getElementById(`chart-q-${q.id}`).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: q.options.map((opt, idx) => `Choice ${String.fromCharCode(65 + idx)}`),
+                        datasets: [{
+                            label: 'Count',
+                            data: counts,
+                            backgroundColor: 'rgba(201, 206, 255, 0.35)',
+                            borderColor: 'rgba(201, 206, 255, 0.85)',
+                            borderWidth: 1.5,
+                            borderRadius: 6,
+                            hoverBackgroundColor: 'rgba(201, 206, 255, 0.6)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: (items) => q.options[items[0].dataIndex]
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Outfit', size: 10 } }
+                            },
+                            y: {
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: { 
+                                    color: 'rgba(255,255,255,0.6)', 
+                                    stepSize: 1,
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Render Q5 Free-Text Feedback
+            const textFeedbackContainer = document.getElementById('text-feedback-container');
+            textFeedbackContainer.innerHTML = '';
+            
+            const q5Responses = responses.filter(r => r.question_id === 5);
+            if (q5Responses.length > 0) {
+                q5Responses.forEach(r => {
+                    const userObj = users.find(u => u.id === r.user_id);
+                    const userHash = userObj ? userObj.email_hash : "Unknown";
+                    const card = document.createElement('div');
+                    card.className = 'col-md-6';
+                    card.innerHTML = `
+                        <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge-anonymized px-2 py-0.5" style="font-size:0.75rem;">${userHash.substring(0,8)}...</span>
+                                <span class="small text-muted" style="font-size:0.75rem;">${formatDate(r.created_at)}</span>
+                            </div>
+                            <p class="mb-0 small" style="line-height:1.4; color: rgba(255,255,255,0.85);">${r.response_value}</p>
+                        </div>
+                    `;
+                    textFeedbackContainer.appendChild(card);
+                });
+            } else {
+                textFeedbackContainer.innerHTML = '<div class="col-12 text-muted small text-center py-3">No free-text feedback submitted yet.</div>';
+            }
+
+            // Render Participants List
+            const listContainer = document.getElementById('participants-list');
+            listContainer.innerHTML = '';
+
+            users.forEach(user => {
                 const userDurations = durations.filter(d => d.user_id === user.id);
                 const userEvents = events.filter(e => e.user_id === user.id);
                 const userResponses = responses.filter(r => r.user_id === user.id);
 
-                const firstLogin = formatDate(user.first_login_at);
-                const lastActive = formatDate(user.last_active_at);
+                const totalUserTime = userDurations.reduce((sum, d) => sum + (d.active_time_seconds || 0), 0);
+                const avgUserTime = userDurations.length > 0 ? Math.round(totalUserTime / userDurations.length) : 0;
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <span class="badge-anonymized" title="${user.email_hash}">${user.email_hash.substring(0, 12)}...</span>
-                    </td>
-                    <td>${firstLogin}</td>
-                    <td>${lastActive}</td>
-                    <td><span class="text-success">${user.current_task_index} tasks</span></td>
-                    <td><span class="text-info">${userResponses.length} answered</span></td>
-                    <td class="text-end">
-                        <button class="btn-outline-custom py-1 px-3" onclick="toggleDetails(${user.id})">Inspect</button>
-                    </td>
+                // Build Durations and Telemetry breakdown per task
+                let taskBreakdownHtml = `
+                    <div class="table-responsive">
+                        <table class="table table-sm table-borderless text-white mb-0" style="font-size: 0.9rem;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-secondary);">
+                                    <th>Task</th>
+                                    <th>Active Time</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Copies</th>
+                                    <th class="text-center">Reveals</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                 `;
-                tbody.appendChild(tr);
-
-                // Create hidden Detail Row
-                const detailTr = document.createElement('tr');
-                detailTr.id = `details-row-${user.id}`;
-                detailTr.className = 'participant-detail-row';
-                detailTr.style.display = 'none';
                 
-                // Build Detail content
-                let durationsList = '<li>No duration metrics available.</li>';
-                if (userDurations.length > 0) {
-                    durationsList = userDurations.map(d => `
-                        <li>Task ${d.task_id}: <strong>${d.active_time_seconds} seconds</strong> active time (${d.completed_at ? 'Completed' : 'Abandoned'})</li>
-                    `).join('');
-                }
+                tasks.forEach(t => {
+                    const tDur = userDurations.find(d => d.task_id === t.id);
+                    const tCopies = userEvents.filter(e => e.task_id === t.id && e.event_type === 'copy_command').length;
+                    const tReveals = userEvents.filter(e => e.task_id === t.id && e.event_type === 'view_solution').length;
+                    
+                    let timeStr = '-';
+                    let statusBadge = '<span class="badge bg-secondary-subtle text-secondary py-1">Not Started</span>';
+                    
+                    if (tDur) {
+                        timeStr = formatDuration(tDur.active_time_seconds);
+                        statusBadge = tDur.completed_at 
+                            ? '<span class="badge bg-success-subtle text-success py-1">Completed</span>' 
+                            : '<span class="badge bg-warning-subtle text-warning py-1" style="background-color: rgba(234, 179, 8, 0.1) !important; color: #eab308 !important;">Abandoned</span>';
+                    }
 
-                let eventsList = '<li>No events recorded.</li>';
-                if (userEvents.length > 0) {
-                    eventsList = userEvents.map(e => `
-                        <li>[${formatDate(e.created_at)}] Triggered <strong>${e.event_type}</strong> on Task ${e.task_id}</li>
-                    `).join('');
-                }
+                    taskBreakdownHtml += `
+                        <tr>
+                            <td><strong>Task ${t.id}: ${t.title}</strong></td>
+                            <td>${timeStr}</td>
+                            <td>${statusBadge}</td>
+                            <td class="text-center">${tCopies}</td>
+                            <td class="text-center">${tReveals}</td>
+                        </tr>
+                    `;
+                });
 
-                let surveyList = '<li>No survey responses submitted.</li>';
-                if (userResponses.length > 0) {
-                    surveyList = userResponses.map(r => `
-                        <div class="mb-3 p-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
-                            <div class="small text-secondary mb-1">Question ${r.question_id}: ${r.question_text}</div>
-                            <div><strong>Answer:</strong> ${r.response_value} ${r.option_index !== null ? `(Index: ${r.option_index})` : ''}</div>
+                taskBreakdownHtml += `</tbody></table></div>`;
+
+                // Build Survey Responses matched to config questions
+                const configQuestions = decryptedData.config.questions || [];
+                let surveyHtml = '';
+                configQuestions.forEach(q => {
+                    const resp = userResponses.find(r => r.question_id === q.id);
+                    let valHtml = '<span class="text-muted italic">Not answered</span>';
+                    if (resp) {
+                        valHtml = `<span style="color: rgba(255,255,255,0.95); font-weight: 500;">${resp.response_value}</span>`;
+                        if (q.type === 'choice' && resp.option_index !== null) {
+                            valHtml += ` <span class="text-muted small">(Option ${String.fromCharCode(65 + resp.option_index)})</span>`;
+                        }
+                    }
+                    surveyHtml += `
+                        <div class="mb-3 p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                            <div class="small text-secondary mb-1"><strong>Q${q.id}:</strong> ${q.text}</div>
+                            <div style="font-size: 0.95rem;">${valHtml}</div>
                         </div>
-                    `).join('');
-                }
+                    `;
+                });
 
-                detailTr.innerHTML = `
-                    <td colspan="6">
-                        <div class="details-wrapper">
-                            <div class="row g-4">
-                                <div class="col-md-4">
-                                    <h5 class="mb-3 text-secondary" style="font-size:0.95rem; text-transform:uppercase; letter-spacing:1px;">Task Durations</h5>
-                                    <ul style="padding-left: 20px; font-size:0.95rem;">${durationsList}</ul>
+                const copiesCount = userEvents.filter(e => e.event_type === 'copy_command').length;
+                const revealsCount = userEvents.filter(e => e.event_type === 'view_solution').length;
+
+                const card = document.createElement('div');
+                card.className = 'participant-card';
+                card.style.background = 'rgba(255,255,255,0.02)';
+                card.style.border = '1px solid var(--border-color)';
+                card.style.borderRadius = '16px';
+                card.style.overflow = 'hidden';
+                card.style.transition = 'all 0.3s ease';
+
+                card.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center p-3" style="cursor: pointer;" onclick="toggleParticipantDetails(${user.id})">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge-anonymized" style="font-size: 0.95rem; letter-spacing: 0.5px;">${user.email_hash}</span>
+                        </div>
+                        <button class="btn-outline-custom py-1.5 px-4" id="btn-toggle-${user.id}">Show More</button>
+                    </div>
+                    
+                    <div id="expanded-content-${user.id}" class="participant-details-container" style="display: none; border-top: 1px solid var(--border-color); background: #12121c; padding: 24px;">
+                        <div class="row g-4">
+                            <div class="col-md-5">
+                                <h5 class="mb-3 text-secondary" style="font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">User Summary</h5>
+                                <div class="p-3 mb-4 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-secondary">Total Active Time:</span>
+                                        <span><strong>${formatDuration(totalUserTime)}</strong></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-secondary">Average Task Time:</span>
+                                        <span><strong>${formatDuration(avgUserTime)}</strong></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-secondary">Total Command Copies:</span>
+                                        <span><strong>${copiesCount}</strong></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-secondary">Total Solution Reveals:</span>
+                                        <span><strong>${revealsCount}</strong></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <h5 class="mb-3 text-secondary" style="font-size:0.95rem; text-transform:uppercase; letter-spacing:1px;">Activity Log</h5>
-                                    <ul style="padding-left: 20px; font-size:0.95rem;">${eventsList}</ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <h5 class="mb-3 text-secondary" style="font-size:0.95rem; text-transform:uppercase; letter-spacing:1px;">Survey Responses</h5>
-                                    <div>${surveyList}</div>
-                                </div>
+                                <h5 class="mb-3 text-secondary" style="font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Task Breakdown</h5>
+                                ${taskBreakdownHtml}
+                            </div>
+                            <div class="col-md-7">
+                                <h5 class="mb-3 text-secondary" style="font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Survey Responses</h5>
+                                <div>${surveyHtml}</div>
                             </div>
                         </div>
-                    </td>
+                    </div>
                 `;
-                tbody.appendChild(detailTr);
+                listContainer.appendChild(card);
             });
         }
 
-        function toggleDetails(userId) {
-            const row = document.getElementById(`details-row-${userId}`);
-            if (row.style.display === 'none') {
-                row.style.display = 'table-row';
+        function toggleParticipantDetails(userId) {
+            const container = document.getElementById(`expanded-content-${userId}`);
+            const btn = document.getElementById(`btn-toggle-${userId}`);
+            if (!container || !btn) return;
+            
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                btn.textContent = 'Show Less';
+                btn.classList.add('active');
             } else {
-                row.style.display = 'none';
+                container.style.display = 'none';
+                btn.textContent = 'Show More';
+                btn.classList.remove('active');
             }
         }
 

@@ -177,6 +177,14 @@ async def export_telemetry_report(token: str):
         # 1. Fetch all telemetry records from DB
         data = await db_manager.get_all_telemetry_data()
 
+        # Load tasks.json configuration to map task names and full questions
+        try:
+            with open("tasks.json", "r") as f:
+                data["config"] = json.load(f)
+        except Exception as ce:
+            logger.warning(f"Could not load tasks.json for export config: {ce}")
+            data["config"] = {"tasks": [], "questions": []}
+
         # 2. Serialize and Encrypt the payload using AES-GCM and PBKDF2
         serialized_data = json.dumps(data)
 

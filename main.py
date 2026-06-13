@@ -60,9 +60,8 @@ async def start_session(request: SessionStartRequest):
         # Fetch or create the user in the database to load progress indices using the hash
         user_data = await db_manager.get_or_create_user(email_hash)
         
-        # Extract the email prefix and truncate to max 12 characters (safe from raw email)
-        username = request.email.split("@")[0] if "@" in request.email else "student"
-        username = username[:12]
+        # Generate an anonymous, consistent username from the email hash
+        username = f"user-{email_hash[:8]}"
         
         # 2. Pass username and the email hash (never the raw email) to the container session
         session = container_manager.create_session(username=username, email=email_hash)
@@ -162,12 +161,13 @@ async def export_telemetry_report(token: str):
     import json
     import os
     import base64
+    import secrets
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     from fastapi.responses import HTMLResponse
 
-    if token != config.ADMIN_TOKEN:
+    if not secrets.compare_digest(token, config.ADMIN_TOKEN):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Unauthorized admin token."

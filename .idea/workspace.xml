@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="revised report template">
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-    </list>
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="styling updates" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -266,14 +264,21 @@
       <option name="project" value="LOCAL" />
       <updated>1781375103707</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="styling updates">
+      <option name="closed" value="true" />
+      <created>1781375858600</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1781375858600</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Initial darft" />
     <MESSAGE value="fixed terminal issues" />
     <MESSAGE value="Removed gvisor hints" />
     <MESSAGE value="revised header" />
@@ -298,7 +303,8 @@
     <MESSAGE value="security additions" />
     <MESSAGE value="revised report" />
     <MESSAGE value="revised report template" />
-    <option name="LAST_COMMIT_MESSAGE" value="revised report template" />
+    <MESSAGE value="styling updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="styling updates" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

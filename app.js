@@ -173,7 +173,7 @@ function renderTask() {
         <div class="quiz-footer">
             ${currentTaskIndex > 0 
               ? `<button class="btn btn-secondary" id="solution-btn">Show Previous Solution</button>` 
-              : `<div></div>`
+              : ''
             }
             <button class="btn btn-primary" id="next-btn">Next Task</button>
         </div>

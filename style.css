@@ -303,15 +303,16 @@ header.main-header .app-subtitle {
 }
 
 .terminal-header .badge {
-  padding: 3px 8px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 0.72rem;
   font-weight: 600;
-  gap: 6px;
-  border-width: 1px;
+  border-width: 1.5px;
+  border-style: solid;
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.25);
   color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .terminal-header .badge.connecting {
@@ -332,28 +333,12 @@ header.main-header .app-subtitle {
   border-color: rgba(239, 68, 68, 0.35);
 }
 
-.terminal-header .pulse-dot {
-  width: 5px;
-  height: 5px;
-}
-
 .terminal-title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
   color: var(--text-light);
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.terminal-title::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--accent-color);
-  box-shadow: 0 0 8px var(--accent-color);
 }
 
 /* Classic terminal emulator viewport is completely isolated from serif fonts */

@@ -287,5 +287,11 @@ function sendResize(cols, rows) {
 
 function updateStatus(status, label) {
     connectionStatus.className = `badge ${status}`;
-    statusText.innerHTML = `<div class="pulse-dot"></div>${label}`;
+    let displayLabel = "Not Connected";
+    if (status === 'connected') {
+        displayLabel = "Connected";
+    } else if (status === 'connecting') {
+        displayLabel = "Connecting";
+    }
+    statusText.textContent = displayLabel;
 }

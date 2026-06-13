@@ -480,7 +480,7 @@
 
             // Render Overall Task Performance Charts
             const tasks = decryptedData.config.tasks || [];
-            const taskLabels = tasks.map(t => `Task ${t.id}: ${t.title}`);
+            const taskLabels = tasks.map(t => [`Task ${t.id}`, t.title]);
             
             // Calculate avg time per task
             const avgTimePerTask = tasks.map(t => {
@@ -516,6 +516,7 @@
                     }]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
@@ -523,12 +524,12 @@
                     },
                     scales: {
                         x: {
-                            grid: { display: false },
-                            ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Outfit', size: 10 } }
-                        },
-                        y: {
                             grid: { color: 'rgba(255,255,255,0.05)' },
                             ticks: { color: 'rgba(255,255,255,0.6)', beginAtZero: true }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Outfit', size: 10 } }
                         }
                     }
                 }
@@ -563,6 +564,7 @@
                     ]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
@@ -572,12 +574,12 @@
                     },
                     scales: {
                         x: {
-                            grid: { display: false },
-                            ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Outfit', size: 10 } }
-                        },
-                        y: {
                             grid: { color: 'rgba(255,255,255,0.05)' },
                             ticks: { color: 'rgba(255,255,255,0.6)', beginAtZero: true, stepSize: 1 }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Outfit', size: 10 } }
                         }
                     }
                 }

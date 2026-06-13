@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="security additions">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="revised report">
       <change beforePath="$PROJECT_DIR$/report_template.html" beforeDir="false" afterPath="$PROJECT_DIR$/report_template.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -251,7 +250,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781371734724</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="revised report">
+      <option name="closed" value="true" />
+      <created>1781374893051</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1781374893051</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -282,7 +289,8 @@
     <MESSAGE value="Added database logging" />
     <MESSAGE value="added report export" />
     <MESSAGE value="security additions" />
-    <option name="LAST_COMMIT_MESSAGE" value="security additions" />
+    <MESSAGE value="revised report" />
+    <option name="LAST_COMMIT_MESSAGE" value="revised report" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -167,13 +167,24 @@ function renderResults() {
             <div class="progress-bar" style="width: ${finalProgressPercent}%"></div>
         </div>
         <div class="results-card">
-            <div class="score-circle">
-                <div class="score-num">✔</div>
+            <div class="checkmark-wrapper">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
             </div>
-            <h2>Thank You!</h2>
+            <div class="results-badge">Evaluation Completed</div>
+            <h2 class="results-title">Thank You!</h2>
             <p class="feedback-text">
-                You have successfully completed all simulation scenarios. Thank you for participating in this evaluation!
+                You have successfully completed all simulation scenarios. Your progress and environment telemetry have been securely saved.
             </p>
+            <div class="completion-banner">
+                <svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>You can now safely close this tab.</span>
+            </div>
         </div>
     `;
 }

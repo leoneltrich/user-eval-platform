@@ -1,23 +1,44 @@
-[
-  {
-    "id": 1,
-    "title": "Workspace Exploration",
-    "scenario": "Start by identifying the current working directory and listing all files in the active workspace. This helps you orient yourself inside the sandbox environment.",
-    "command": "pwd && ls -la",
-    "solution": "The 'pwd' command prints the current absolute path (which should be /tmp), and 'ls -la' lists all files including hidden ones (like . and ..) in a long listing format."
-  },
-  {
-    "id": 2,
-    "title": "Inspect Running Processes",
-    "scenario": "Display all active running processes inside the sandbox terminal. Verify that ttyd and the shell (bash) are actively running in your session.",
-    "command": "ps aux",
-    "solution": "Running 'ps aux' outputs the process table. You will see '/sbin/tini -- ttyd -W bash' running as PID 1, along with the 'ttyd' daemon and 'bash' interactive shell running under your user ID."
-  },
-  {
-    "id": 3,
-    "title": "Verify gVisor Kernel Isolation",
-    "scenario": "Verify that your container is successfully running inside a gVisor user-space kernel instead of the host kernel. Check the kernel release details.",
-    "command": "uname -a",
-    "solution": "The output of 'uname -a' should contain 'gvisor'. This indicates that system calls are virtualized by gVisor's sentry kernel rather than passing directly to the host OS."
-  }
-]
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Workspace Exploration",
+      "scenario": "Start by identifying the current working directory and listing all files in the active workspace. This helps you orient yourself inside the sandbox environment.",
+      "command": "pwd && ls -la",
+      "solution": "The 'pwd' command prints the current absolute path (which should be /tmp), and 'ls -la' lists all files including hidden ones (like . and ..) in a long listing format."
+    },
+    {
+      "id": 2,
+      "title": "Inspect Running Processes",
+      "scenario": "Display all active running processes inside the sandbox terminal. Verify that ttyd and the shell (bash) are actively running in your session.",
+      "command": "ps aux",
+      "solution": "Running 'ps aux' outputs the process table. You will see '/sbin/tini -- ttyd -W bash' running as PID 1, along with the 'ttyd' daemon and 'bash' interactive shell running under your user ID."
+    },
+    {
+      "id": 3,
+      "title": "Verify gVisor Kernel Isolation",
+      "scenario": "Verify that your container is successfully running inside a gVisor user-space kernel instead of the host kernel. Check the kernel release details.",
+      "command": "uname -a",
+      "solution": "The output of 'uname -a' should contain 'gvisor'. This indicates that system calls are virtualized by gVisor's sentry kernel rather than passing directly to the host OS."
+    }
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "type": "choice",
+      "text": "How would you rate the responsiveness and performance of the gVisor sandboxed terminal?",
+      "options": [
+        "Excellent - indistinguishable from a local machine",
+        "Good - very responsive with minor latency",
+        "Satisfactory - usable but noticeable lag",
+        "Poor - slow command execution and laggy feedback",
+        "Unusable - completely unresponsive"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "text",
+      "text": "Please share your thoughts on the gVisor sandbox isolation. Do you feel this evaluation environment is secure?"
+    }
+  ]
+}

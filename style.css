@@ -759,3 +759,27 @@ header.main-header .app-subtitle {
   opacity: 0.9;
 }
 
+/* Textarea Feedback Input */
+.feedback-textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-family: inherit;
+  font-size: 1.05rem;
+  outline: none;
+  transition: all 0.3s ease;
+  resize: vertical;
+  margin-bottom: 24px;
+  line-height: 1.45;
+}
+
+.feedback-textarea:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 14px rgba(201, 206, 255, 0.25);
+}
+

@@ -1,6 +1,11 @@
 // Global State Variables
 let tasks = [];
+let surveyQuestions = [];
 let currentTaskIndex = 0;
+let currentQuestionIndex = 0;
+let quizMode = 'tasks'; // 'tasks' | 'survey' | 'complete'
+let surveyAnswers = []; // to store collected survey responses locally in-memory
+
 let terminalSessionId = null;
 let socket = null;
 let term = null;
@@ -31,7 +36,14 @@ async function initQuiz() {
         if (!response.ok) {
             throw new Error(`Failed to load tasks: HTTP status ${response.status}`);
         }
-        tasks = await response.json();
+        const data = await response.json();
+        if (data && data.tasks) {
+            tasks = data.tasks;
+            surveyQuestions = data.questions || [];
+        } else {
+            tasks = data || [];
+            surveyQuestions = [];
+        }
         renderTask();
     } catch (err) {
         console.error("Error loading tasks configuration:", err);
@@ -46,7 +58,13 @@ function renderTask() {
     }
 
     if (currentTaskIndex >= tasks.length) {
-        renderResults();
+        if (surveyQuestions && surveyQuestions.length > 0) {
+            quizMode = 'survey';
+            renderSurvey();
+        } else {
+            quizMode = 'complete';
+            renderResults();
+        }
         return;
     }
     
@@ -143,6 +161,109 @@ function renderTask() {
     });
 }
 
+function renderSurvey() {
+    if (currentQuestionIndex >= surveyQuestions.length) {
+        quizMode = 'complete';
+        renderResults();
+        return;
+    }
+
+    const questionData = surveyQuestions[currentQuestionIndex];
+    const progressPercent = (currentQuestionIndex / surveyQuestions.length) * 100;
+    
+    let optionsHtml = '';
+    if (questionData.type === 'choice') {
+        optionsHtml = `
+            <div class="options-container">
+                ${questionData.options.map((option, idx) => `
+                    <button class="option-btn" data-index="${idx}">
+                        <span>${option}</span>
+                        <span class="option-marker">${String.fromCharCode(65 + idx)}</span>
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    } else if (questionData.type === 'text') {
+        optionsHtml = `
+            <div class="survey-content-wrapper" style="flex: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 28px;">
+                <textarea class="feedback-textarea" id="feedback-input" placeholder="Type your response here..."></textarea>
+            </div>
+        `;
+    }
+
+    const isLastQuestion = currentQuestionIndex === surveyQuestions.length - 1;
+    const nextBtnText = isLastQuestion ? 'Finish' : 'Next Question';
+
+    quizCard.innerHTML = `
+        <div class="progress-container">
+            <div class="progress-bar" style="width: ${progressPercent}%"></div>
+        </div>
+        <div class="quiz-question-number">Question ${currentQuestionIndex + 1} of ${surveyQuestions.length}</div>
+        <h2 class="quiz-question-text" id="question-text">${questionData.text}</h2>
+        
+        ${optionsHtml}
+
+        <div class="quiz-footer" style="justify-content: flex-end;">
+            <button class="btn btn-primary" id="next-question-btn" disabled>${nextBtnText}</button>
+        </div>
+    `;
+
+    const nextBtn = document.getElementById('next-question-btn');
+
+    if (questionData.type === 'choice') {
+        let selectedIndex = null;
+        const optionBtns = quizCard.querySelectorAll('.option-btn');
+        optionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                optionBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedIndex = parseInt(btn.getAttribute('data-index'));
+                nextBtn.removeAttribute('disabled');
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (selectedIndex !== null) {
+                const answerText = questionData.options[selectedIndex];
+                surveyAnswers.push({
+                    questionId: questionData.id,
+                    question: questionData.text,
+                    type: 'choice',
+                    answer: answerText,
+                    optionIndex: selectedIndex
+                });
+                console.log("Survey answers updated:", surveyAnswers);
+                currentQuestionIndex++;
+                renderSurvey();
+            }
+        });
+    } else if (questionData.type === 'text') {
+        const textarea = document.getElementById('feedback-input');
+        textarea.addEventListener('input', () => {
+            if (textarea.value.trim().length > 0) {
+                nextBtn.removeAttribute('disabled');
+            } else {
+                nextBtn.setAttribute('disabled', 'true');
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const val = textarea.value.trim();
+            if (val.length > 0) {
+                surveyAnswers.push({
+                    questionId: questionData.id,
+                    question: questionData.text,
+                    type: 'text',
+                    answer: val
+                });
+                console.log("Survey answers updated:", surveyAnswers);
+                currentQuestionIndex++;
+                renderSurvey();
+            }
+        });
+    }
+}
+
 function renderResults() {
     // 1. Add class "complete" to the main workspace container to trigger CSS transitions
     const workspace = document.getElementById('main-workspace');
@@ -159,6 +280,10 @@ function renderResults() {
         term = null;
         document.getElementById('terminal').innerHTML = '';
     }
+
+    // Print final collected answers to console (in-memory only)
+    console.log("=== FINAL SURVEY RESPONSES ===");
+    console.log(JSON.stringify(surveyAnswers, null, 2));
 
     // 3. Render the feedback screen thanking the user
     const finalProgressPercent = 100;
@@ -188,6 +313,7 @@ function renderResults() {
         </div>
     `;
 }
+
 
 // Sandbox Provisioning & WebSocket Bridge Setup
 async function initTerminalSession() {

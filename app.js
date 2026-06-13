@@ -191,7 +191,8 @@ async function initTerminalSession() {
         // Provision the gVisor sandbox container
         const response = await fetch(`${origin}/api/start-session`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail })
         });
         
         if (!response.ok) {

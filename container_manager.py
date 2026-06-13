@@ -34,12 +34,15 @@ class ContainerManager:
         self._sessions: Dict[str, dict] = {}
         self._setup_sandbox_network()
 
-    def create_session(self) -> ContainerSession:
+    def create_session(self, username: str = "student") -> ContainerSession:
         """Spins up a sandboxed, resource-constrained container using gVisor (runsc) and maps ttyd to local interface."""
         session_id = str(uuid.uuid4())
         
         # Calculate nano_cpus based on core limit (nano_cpus = cores * 10^9)
         nano_cpus = int(CONTAINER_CPU_LIMIT * 1_000_000_000)
+
+        # Build custom shell prompt using the provided username
+        prompt = f"{username}@sandbox:\\w\\$ "
 
         try:
             # Launch container with custom prompt environment
@@ -56,8 +59,8 @@ class ContainerManager:
                 working_dir="/tmp",
                 hostname="sandbox",
                 environment={
-                    "PROMPT_COMMAND": "export PS1='student@sandbox:\\w\\$ '",
-                    "PS1": "student@sandbox:\\w\\$ ",
+                    "PROMPT_COMMAND": f"export PS1='{prompt}'",
+                    "PS1": prompt,
                     "HOME": "/tmp"
                 }
             )

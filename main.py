@@ -33,15 +33,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class SessionStartRequest(BaseModel):
+    email: str
+
 class SessionStartResponse(BaseModel):
     session_id: str
     status: str
 
 @app.post("/api/start-session", response_model=SessionStartResponse, status_code=status.HTTP_201_CREATED)
-async def start_session():
+async def start_session(request: SessionStartRequest):
     """Endpoint to trigger the initialization of a new sandboxed container session."""
     try:
-        session = container_manager.create_session()
+        # Extract the email prefix and truncate to max 12 characters
+        username = request.email.split("@")[0] if "@" in request.email else "student"
+        username = username[:12]
+        
+        session = container_manager.create_session(username=username)
         return SessionStartResponse(session_id=session.session_id, status="started")
     except Exception as e:
         raise HTTPException(

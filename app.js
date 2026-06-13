@@ -186,7 +186,7 @@ function renderSurvey() {
     } else if (questionData.type === 'text') {
         optionsHtml = `
             <div class="survey-content-wrapper" style="flex: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 28px;">
-                <textarea class="feedback-textarea" id="feedback-input" placeholder="Type your response here..."></textarea>
+                <textarea class="feedback-textarea" id="feedback-input" placeholder="Type your response here..." maxlength="1000"></textarea>
             </div>
         `;
     }
@@ -248,7 +248,7 @@ function renderSurvey() {
         });
 
         nextBtn.addEventListener('click', () => {
-            const val = textarea.value.trim();
+            const val = textarea.value.trim().substring(0, 1000);
             if (val.length > 0) {
                 surveyAnswers.push({
                     questionId: questionData.id,
@@ -408,16 +408,18 @@ function connectWebSocket(sessionId) {
     // Intercept client keystrokes: prefix with '0' (ttyd input packet type)
     term.onData(data => {
         if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send('0' + data);
+            const safeData = data.length > 8192 ? data.substring(0, 8192) : data;
+            socket.send('0' + safeData);
         }
     });
 
     // Handle binary input pasting: prefix with '0'
     term.onBinary(data => {
         if (socket && socket.readyState === WebSocket.OPEN) {
-            const buffer = new Uint8Array(data.length + 1);
+            const safeLength = Math.min(data.length, 8192);
+            const buffer = new Uint8Array(safeLength + 1);
             buffer[0] = 48; // ASCII for '0'
-            for (let i = 0; i < data.length; i++) {
+            for (let i = 0; i < safeLength; i++) {
                 buffer[i + 1] = data.charCodeAt(i);
             }
             socket.send(buffer);
@@ -520,6 +522,7 @@ function checkUserEmail() {
 }
 
 function validateEmail(email) {
+    if (!email || email.length > 254) return false;
     const re = /^[^\s@]+@[^\s@]+$/;
     return re.test(email);
 }

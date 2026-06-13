@@ -3,7 +3,7 @@ import asyncio
 from fastapi import FastAPI, HTTPException, status, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import websockets
 from container_manager import ContainerManager
 
@@ -34,7 +34,7 @@ app.add_middleware(
 )
 
 class SessionStartRequest(BaseModel):
-    email: str
+    email: str = Field(..., max_length=254)
 
 class SessionStartResponse(BaseModel):
     session_id: str
@@ -96,7 +96,14 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
     and the sandboxed container ttyd instance. Includes a retry mechanism to handle 
     container boot latency.
     """
-    # 1. Look up the session ID to fetch the container's randomized host port
+    # 1. Validate the length of the session ID first
+    if not session_id or len(session_id) > 50:
+        await websocket.accept()
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Invalid session ID length")
+        logger.warning(f"Rejected websocket request: Invalid session ID length")
+        return
+
+    # Look up the session ID to fetch the container's randomized host port
     session = container_manager.get_session(session_id)
     if not session:
         # Accept and immediately close the socket if the session is invalid
@@ -153,9 +160,15 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
                             while True:
                                 data = await websocket.receive()
                                 if "text" in data:
-                                    await target_ws.send(data["text"])
+                                    text_msg = data["text"]
+                                    if len(text_msg) > 8192:
+                                        text_msg = text_msg[:8192]
+                                    await target_ws.send(text_msg)
                                 elif "bytes" in data:
-                                    await target_ws.send(data["bytes"])
+                                    bytes_msg = data["bytes"]
+                                    if len(bytes_msg) > 8192:
+                                        bytes_msg = bytes_msg[:8192]
+                                    await target_ws.send(bytes_msg)
                                 elif "type" in data and data["type"] == "websocket.disconnect":
                                     break
                         except WebSocketDisconnect:

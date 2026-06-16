@@ -130,12 +130,12 @@
       "text": "What was the most helpful aspect of the tool during the tasks?"
     },
     {
-      "id": 10,
+      "id": 11,
       "type": "text",
       "text": "What was the most confusing, frustrating, or unreliable aspect of the tool?"
     },
     {
-      "id": 10,
+      "id": 12,
       "type": "text",
       "text": "In what situation would you prefer this tool over man pages, internal documentation, or asking a colleague? In what situation would you not use it?"
     }

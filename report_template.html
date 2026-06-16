@@ -322,8 +322,8 @@
 
         <!-- Free Text Responses -->
         <div class="panel-card mb-4">
-            <div class="panel-title mb-3">Q5 Free-Text Feedback: Advantages / Drawbacks</div>
-            <div class="row g-3" id="text-feedback-container" style="max-height: 320px; overflow-y: auto; padding-right: 4px;">
+            <div class="panel-title mb-3">Survey Free-Text Responses</div>
+            <div id="text-feedback-container" style="max-height: 450px; overflow-y: auto; overflow-x: hidden; padding-right: 4px;">
                 <!-- Dynamically populated -->
             </div>
         </div>
@@ -589,7 +589,8 @@
                 // Count answers for this question
                 const counts = Array(q.options.length).fill(0);
                 responses.forEach(r => {
-                    if (r.question_id === q.id && r.option_index !== null && r.option_index < q.options.length) {
+                    const isMatch = r.question_id === q.id && (r.question_text === q.text || choiceQuestions.filter(oq => oq.id === q.id).length === 1);
+                    if (isMatch && r.option_index !== null && r.option_index < q.options.length) {
                         counts[r.option_index]++;
                     }
                 });
@@ -638,30 +639,59 @@
                 });
             });
 
-            // Render Q5 Free-Text Feedback
+            // Render Free-Text Responses dynamically from config
             const textFeedbackContainer = document.getElementById('text-feedback-container');
             textFeedbackContainer.innerHTML = '';
+
+            const textQuestions = (decryptedData.config.questions || []).filter(q => q.type === 'text');
             
-            const q5Responses = responses.filter(r => r.question_id === 5);
-            if (q5Responses.length > 0) {
-                q5Responses.forEach(r => {
-                    const userObj = users.find(u => u.id === r.user_id);
-                    const userHash = userObj ? userObj.email_hash : "Unknown";
-                    const card = document.createElement('div');
-                    card.className = 'col-md-6';
-                    card.innerHTML = `
-                        <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="badge-anonymized px-2 py-0.5" style="font-size:0.75rem;">${userHash.substring(0,8)}...</span>
-                                <span class="small text-muted" style="font-size:0.75rem;">${formatDate(r.created_at)}</span>
-                            </div>
-                            <p class="mb-0 small" style="line-height:1.4; color: rgba(255,255,255,0.85);">${r.response_value}</p>
-                        </div>
+            if (textQuestions.length > 0) {
+                textQuestions.forEach((q, index) => {
+                    const qBlock = document.createElement('div');
+                    qBlock.className = index > 0 ? 'mt-4 pt-3' : '';
+                    if (index > 0) {
+                        qBlock.style.borderTop = '1px solid rgba(255, 255, 255, 0.05)';
+                    }
+                    
+                    // Filter responses for this text question
+                    const qResponses = responses.filter(r => 
+                        r.question_id === q.id && 
+                        (r.question_text === q.text || textQuestions.filter(oq => oq.id === q.id).length === 1) && 
+                        r.response_value && 
+                        r.response_value.trim() !== ''
+                    );
+                    
+                    let responsesHtml = '';
+                    if (qResponses.length > 0) {
+                        responsesHtml = '<div class="row g-3 mx-0">';
+                        qResponses.forEach(r => {
+                            const userObj = users.find(u => u.id === r.user_id);
+                            const userHash = userObj ? userObj.email_hash : "Unknown";
+                            responsesHtml += `
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="badge-anonymized px-2 py-0.5" style="font-size:0.75rem;">${userHash.substring(0,8)}...</span>
+                                            <span class="small text-muted" style="font-size:0.75rem;">${formatDate(r.created_at)}</span>
+                                        </div>
+                                        <p class="mb-0 small" style="line-height:1.4; color: rgba(255,255,255,0.85);">${r.response_value}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        responsesHtml += '</div>';
+                    } else {
+                        responsesHtml = '<div class="text-muted small py-2">No responses submitted for this question yet.</div>';
+                    }
+
+                    qBlock.innerHTML = `
+                        <h6 class="text-secondary small mb-3">Q${q.id}: ${q.text}</h6>
+                        ${responsesHtml}
                     `;
-                    textFeedbackContainer.appendChild(card);
+                    textFeedbackContainer.appendChild(qBlock);
                 });
             } else {
-                textFeedbackContainer.innerHTML = '<div class="col-12 text-muted small text-center py-3">No free-text feedback submitted yet.</div>';
+                textFeedbackContainer.innerHTML = '<div class="col-12 text-muted small text-center py-3">No free-text feedback questions configured.</div>';
             }
 
             // Render Participants List
@@ -727,7 +757,7 @@
                 const configQuestions = decryptedData.config.questions || [];
                 let surveyHtml = '';
                 configQuestions.forEach(q => {
-                    const resp = userResponses.find(r => r.question_id === q.id);
+                    const resp = userResponses.find(r => r.question_id === q.id && (r.question_text === q.text || configQuestions.filter(oq => oq.id === q.id).length === 1));
                     let valHtml = '<span class="text-muted italic">Not answered</span>';
                     if (resp) {
                         valHtml = `<span style="color: rgba(255,255,255,0.95); font-weight: 500;">${resp.response_value}</span>`;

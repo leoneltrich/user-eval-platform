@@ -17,7 +17,7 @@ docker compose -f docker-compose.db.yml up -d
 ### Stop the Database (Preserving Data)
 To stop the database container without losing your collected data:
 ```bash
-docker compose -f docker-compose.db.yml stop
+docker compose -f docker-compose.db.yml down -v
 ```
 
 ### Take Down the Database & Wipe All Data (Fresh Start)

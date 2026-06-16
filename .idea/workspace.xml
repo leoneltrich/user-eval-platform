@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated tasks and added readme">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="Updated questions and report">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/report_template.html" beforeDir="false" afterPath="$PROJECT_DIR$/report_template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +59,7 @@
       <workItem from="1781309447624" duration="17210000" />
       <workItem from="1781447473772" duration="417000" />
       <workItem from="1781448443761" duration="90000" />
-      <workItem from="1781626840603" duration="1973000" />
+      <workItem from="1781626840603" duration="2654000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -344,14 +341,21 @@
       <option name="project" value="LOCAL" />
       <updated>1781627845406</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Updated questions and report">
+      <option name="closed" value="true" />
+      <created>1781629276223</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1781629276223</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated networking security" />
     <MESSAGE value="Initial mail tracking" />
     <MESSAGE value="revised design" />
     <MESSAGE value="revised strict email checks" />
@@ -376,7 +380,8 @@
     <MESSAGE value="revised report template" />
     <MESSAGE value="removed favicon" />
     <MESSAGE value="updated tasks and added readme" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated tasks and added readme" />
+    <MESSAGE value="Updated questions and report" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated questions and report" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

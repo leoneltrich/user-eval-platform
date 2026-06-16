@@ -376,7 +376,8 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
                                                         elapsed = int(time.time() - last_active_start)
                                                         if task_id and task_id > 0:
                                                             await db_manager.add_task_duration(email, task_id, elapsed)
-                                                            logger.info(f"Saved completed task {task_id} active duration: {elapsed}s")
+                                                            await db_manager.finalize_task(email, task_id)
+                                                            logger.info(f"Saved completed task {task_id} active duration and finalized: {elapsed}s")
                                                         last_active_start = time.time()
                                         except Exception as e:
                                             logger.error(f"Error handling telemetry signal: {e}")

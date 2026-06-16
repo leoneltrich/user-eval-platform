@@ -174,14 +174,29 @@ class DatabaseManager:
             user = await conn.fetchrow("SELECT id FROM users WHERE email_hash = $1", email_hash)
             if not user:
                 return
-            await conn.execute(
-                """
-                UPDATE task_durations 
-                SET completed_at = CURRENT_TIMESTAMP 
-                WHERE user_id = $1 AND task_id = $2 AND completed_at IS NULL
-                """,
+            
+            # Check if duration record exists
+            row = await conn.fetchrow(
+                "SELECT id FROM task_durations WHERE user_id = $1 AND task_id = $2",
                 user["id"], task_id
             )
+            if row:
+                await conn.execute(
+                    """
+                    UPDATE task_durations 
+                    SET completed_at = CURRENT_TIMESTAMP 
+                    WHERE id = $1 AND completed_at IS NULL
+                    """,
+                    row["id"]
+                )
+            else:
+                await conn.execute(
+                    """
+                    INSERT INTO task_durations (user_id, task_id, active_time_seconds, started_at, completed_at)
+                    VALUES ($1, $2, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                    """,
+                    user["id"], task_id
+                )
 
     async def save_survey_response(self, email_hash: str, question_id: int, question_text: str, response_type: str, response_value: str, option_index: Optional[int]):
         """Save a survey questionnaire response."""

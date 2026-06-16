@@ -26,7 +26,7 @@
     {
       "id": 1,
       "type": "choice",
-      "text": "In a restricted environment where cloud-based AI cannot be used, this local tool would be a highly effective alternative for complex command options.",
+      "text": "The tool was easy to understand during the tasks.",
       "options": [
         "I completely disagree",
         "I somewhat disagree",
@@ -38,7 +38,7 @@
     {
       "id": 2,
       "type": "choice",
-      "text": "Based on how well the tool retrieved options for standard commands during the test, I am confident it would successfully help me navigate a niche or internally developed CLI tool.",
+      "text": "I felt confident using the information provided by the tool.",
       "options": [
         "I completely disagree",
         "I somewhat disagree",
@@ -49,7 +49,7 @@
     },{
       "id": 3,
       "type": "choice",
-      "text": "Compared to the alternatives in a restricted environment (e.g., reading internal wikis, checking man pages, or asking a colleague), using this tool would significantly speed up my workflow.",
+      "text": "Using the tool reduced the effort needed to understand command options",
       "options": [
         "I completely disagree",
         "I somewhat disagree",
@@ -59,6 +59,61 @@
       ]
     },{
       "id": 4,
+      "type": "choice",
+      "text": "I felt frustrated while using the tool.",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },{
+      "id": 5,
+      "type": "choice",
+      "text": "Overall, I was satisfied with the experience of using the tool",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },{
+      "id": 6,
+      "type": "choice",
+      "text": "In a restricted environment where cloud-based AI cannot be used, this local tool would be a highly effective alternative for complex command options.",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },{
+      "id": 7,
+      "type": "choice",
+      "text": "Based on how well the tool retrieved options for standard commands during the test, I am confident it would successfully help me navigate a niche or internally developed CLI tool.",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },{
+      "id": 8,
+      "type": "choice",
+      "text": "Compared to the alternatives in a restricted environment (e.g., reading internal wikis, checking man pages, or asking a colleague), using this tool would significantly speed up my workflow.",
+      "options": [
+        "I completely disagree",
+        "I somewhat disagree",
+        "I feel neutral about it",
+        "I somewhat agree",
+        "I completely agree"
+      ]
+    },{
+      "id": 9,
       "type": "choice",
       "text": "If my daily job required interacting with undocumented or proprietary command-line applications, I would actively want this local tool installed on my machine.",
       "options": [
@@ -70,9 +125,19 @@
       ]
     },
     {
-      "id": 5,
+      "id": 10,
       "type": "text",
-      "text": "Considering the scenario above, what do you see as the biggest advantage or potential drawback of relying on this specific tool for internal applications?"
+      "text": "What was the most helpful aspect of the tool during the tasks?"
+    },
+    {
+      "id": 10,
+      "type": "text",
+      "text": "What was the most confusing, frustrating, or unreliable aspect of the tool?"
+    },
+    {
+      "id": 10,
+      "type": "text",
+      "text": "In what situation would you prefer this tool over man pages, internal documentation, or asking a colleague? In what situation would you not use it?"
     }
   ]
 }

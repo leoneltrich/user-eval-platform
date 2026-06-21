@@ -30,11 +30,9 @@ RUN mkdir -p /tmp/data/sub /tmp/misc /tmp/results /tmp/backup
 RUN echo "sample data stream" > /tmp/data/file1.txt
 RUN echo "nested sample data" > /tmp/data/sub/file2.txt
 
-# Setup matching files with specific timestamps for Task 2
+# Setup files for Task 2 (Backup with numbered copy)
 RUN echo "new benchmark results v2" > /tmp/results/benchmark
 RUN echo "old benchmark results v1" > /tmp/backup/benchmark
-RUN touch -d "2026-06-20 12:00:00" /tmp/backup/benchmark
-RUN touch -d "2026-06-20 13:00:00" /tmp/results/benchmark
 
 # Setup files for Task 3
 RUN echo "987654321" > /tmp/numbers.txt

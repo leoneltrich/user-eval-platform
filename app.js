@@ -156,8 +156,10 @@ function renderTask() {
             <div class="quiz-question-number">All Simulation Tasks Completed!</div>
             <h2 class="quiz-question-text">Congratulations!</h2>
             
-            <p class="feedback-text">You have successfully completed all simulation scenarios. Before proceeding to the survey questionnaire, you can review the solution for the final task.</p>
-
+            <p class="feedback-text">Thank you for completing the tasks! Please complete the following questionnaire. It will be divided into three short sections (12 questions total):</p>
+            <p class="feedback-text">A. User experience while using the tool</p>
+            <p class="feedback-text">B. Technology acceptance</p>
+            <p class="feedback-text">C. Open qualitative feedback</p>
             <div id="solution-container"></div>
 
             <div class="quiz-footer">

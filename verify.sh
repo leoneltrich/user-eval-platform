@@ -45,18 +45,34 @@ case $TASK in
         ;;
 
     2)
-        # Task 2: Backup /tmp/results/benchmark to /tmp/backup/ if destination is older
+        # Task 2: Backup /tmp/results/benchmark to /tmp/backup/ ensuring the copy in /tmp/backup is numbered
         if [ ! -f "/tmp/backup/benchmark" ]; then
             echo -e "${RED}STATUS: FAILED${NC}"
             echo -e "${RED}ERROR: '/tmp/backup/benchmark' does not exist.${NC}"
             exit 1
         fi
 
-        # Verify the content has been updated
+        # Verify the target file content has been updated
         CONTENT=$(cat /tmp/backup/benchmark 2>/dev/null)
         if [ "$CONTENT" != "new benchmark results v2" ]; then
             echo -e "${RED}STATUS: FAILED${NC}"
-            echo -e "${RED}ERROR: Destination file '/tmp/backup/benchmark' does not contain the updated benchmark data.${NC}"
+            echo -e "${RED}ERROR: Destination file '/tmp/backup/benchmark' does not contain the copied benchmark data.${NC}"
+            exit 1
+        fi
+
+        # Verify that a numbered backup file exists
+        BACKUP_FILE=$(ls /tmp/backup/benchmark.~*~ 2>/dev/null | head -n 1)
+        if [ -z "$BACKUP_FILE" ]; then
+            echo -e "${RED}STATUS: FAILED${NC}"
+            echo -e "${RED}ERROR: No numbered backup file (e.g. benchmark.~1~) was found inside '/tmp/backup'.${NC}"
+            exit 1
+        fi
+
+        # Verify the backup file content is the original/old content
+        BACKUP_CONTENT=$(cat "$BACKUP_FILE" 2>/dev/null)
+        if [ "$BACKUP_CONTENT" != "old benchmark results v1" ]; then
+            echo -e "${RED}STATUS: FAILED${NC}"
+            echo -e "${RED}ERROR: The numbered backup file does not contain the original benchmark data.${NC}"
             exit 1
         fi
 
@@ -68,7 +84,7 @@ case $TASK in
         fi
 
         echo -e "${GREEN}STATUS: SUCCESS${NC}"
-        echo -e "${GREEN}MESSAGE: Benchmark successfully backed up to /tmp/backup/ with update constraints.${NC}"
+        echo -e "${GREEN}MESSAGE: Benchmark successfully backed up with a numbered copy in /tmp/backup.${NC}"
         ;;
 
     3)

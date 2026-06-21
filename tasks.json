@@ -28,14 +28,14 @@
     {
       "id": 4,
       "title": "Environment Initialization",
-      "scenario": "Your goal is to prepare your current folder for a production environment. Use the tool to create a new, secure production setup file in this directory. Once the file is created with the correct secure and production settings, you can run the verifier to check your work.\n\nTo use the tool: command-finder query \"your query\"",
+      "scenario": "Your goal is to prepare your current folder for a production environment. Use the correct tool to create a new, secure production setup file in this directory. Ensure the file is created with the correct secure and production settings!\n\nTo use the tool: command-finder query \"your query\"",
       "command": "verify.sh 4",
       "solution": "ops-sync --genesis -m:secure --env prod"
     },
     {
       "id": 5,
       "title": "Legacy Payload Injection",
-      "scenario": "There is an existing file in your directory named data.txt. You need to use the tool to add a legacy version marker to the very end of this file. Make sure you also trigger the tool's header rotation feature during this process so the file updates correctly without any errors or lost data. \n\nTo use the tool: command-finder query \"your query\"",
+      "scenario": "There is an existing file in your directory named that needs to be modified data.txt. You need to use the tool to add a legacy version marker to the very end of this file. Make sure you also trigger the tool's header rotation feature during this process so the file updates correctly without any errors or lost data. \n\nTo use the tool: command-finder query \"your query\"",
       "command": "verify.sh 5",
       "solution": "ops-sync --append data.txt --stream legacy-v2 --force-rotate"
     },

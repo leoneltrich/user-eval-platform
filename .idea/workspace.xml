@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated tasks file">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated tasks file and verify script">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/verify.sh" beforeDir="false" afterPath="$PROJECT_DIR$/verify.sh" afterDir="false" />
     </list>
@@ -81,15 +84,7 @@
       <workItem from="1781448443761" duration="90000" />
       <workItem from="1781626840603" duration="10701000" />
       <workItem from="1781801300637" duration="18328000" />
-      <workItem from="1782036636898" duration="23476000" />
-    </task>
-    <task id="LOCAL-00005" summary="revised design">
-      <option name="closed" value="true" />
-      <created>1781312038912</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1781312038912</updated>
+      <workItem from="1782036636898" duration="25253000" />
     </task>
     <task id="LOCAL-00006" summary="revised header">
       <option name="closed" value="true" />
@@ -475,7 +470,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782083731953</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="updated tasks file and verify script">
+      <option name="closed" value="true" />
+      <created>1782084232357</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1782084232358</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -493,7 +496,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="revised report" />
     <MESSAGE value="styling updates" />
     <MESSAGE value="responsivenes" />
     <MESSAGE value="styling" />
@@ -518,7 +520,8 @@
     <MESSAGE value="updated tasks" />
     <MESSAGE value="updated tasks and dockerfile and verify" />
     <MESSAGE value="updated tasks file" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated tasks file" />
+    <MESSAGE value="updated tasks file and verify script" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated tasks file and verify script" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

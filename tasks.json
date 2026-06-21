@@ -14,7 +14,7 @@
     {
       "id": 2,
       "title": "Backup!",
-      "scenario": "You have a bunch of important data that you need to create a safety copy of in the results directory (/tmp/results). However there is already some data in the backup directory and you want to make sure the new data is only added to the directory if the data in the destination is older!",
+      "scenario": "You have important data that you need to create a safety copy of, in a file called benchmark (/tmp/results/benchmark). However there is already some data in the backup directory and you want to make sure the new data is only added to the directory if the data in the destination (/tmp/backup) is older!",
       "command": "verify.sh 2",
       "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
     },

@@ -7,6 +7,8 @@ CONTAINER_MEM_LIMIT = os.getenv("CONTAINER_MEM_LIMIT", "1024m")
 CONTAINER_CPU_LIMIT = float(os.getenv("CONTAINER_CPU_LIMIT", "4"))  # Fraction of CPU core limit (e.g. 0.5 cores)
 CONTAINER_USER = os.getenv("CONTAINER_USER", "1000:1000")  # ID of non-root user to run inside alpine ttyd
 SANDBOX_NETWORK_NAME = os.getenv("SANDBOX_NETWORK_NAME", "quiz_sandbox_net")
+CONTAINER_STORAGE_LIMIT = os.getenv("CONTAINER_STORAGE_LIMIT", "500m")  # Storage constraint limit (e.g., 500m, 1g)
+
 
 # Database Configuration Settings
 DB_HOST = os.getenv("DB_HOST", "127.0.0.1")

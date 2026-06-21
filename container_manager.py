@@ -3,7 +3,8 @@ import uuid
 import docker
 from typing import Dict, Optional
 from pydantic import BaseModel
-from config import DOCKER_IMAGE, DOCKER_RUNTIME, CONTAINER_MEM_LIMIT, CONTAINER_CPU_LIMIT, CONTAINER_USER, SANDBOX_NETWORK_NAME
+from config import DOCKER_IMAGE, DOCKER_RUNTIME, CONTAINER_MEM_LIMIT, CONTAINER_CPU_LIMIT, CONTAINER_USER, SANDBOX_NETWORK_NAME, CONTAINER_STORAGE_LIMIT
+
 
 logger = logging.getLogger("orchestrator.manager")
 
@@ -45,25 +46,43 @@ class ContainerManager:
         prompt = f"{username}@sandbox:\\w\\$ "
 
         try:
-            # Launch container with custom prompt environment
-            container = self.client.containers.run(
-                image=DOCKER_IMAGE,
-                runtime=DOCKER_RUNTIME,
-                network=SANDBOX_NETWORK_NAME,  # Connect to isolated network
-                ports={'7681/tcp': ('127.0.0.1', 0)},  # Bind to an ephemeral port on loopback interface
-                mem_limit=CONTAINER_MEM_LIMIT,
-                nano_cpus=nano_cpus,
-                user=CONTAINER_USER,
-                detach=True,
-                auto_remove=True,
-                working_dir="/tmp",
-                hostname="sandbox",
-                environment={
+            # Prepare container run options
+            run_kwargs = {
+                "image": DOCKER_IMAGE,
+                "runtime": DOCKER_RUNTIME,
+                "network": SANDBOX_NETWORK_NAME,  # Connect to isolated network
+                "ports": {'7681/tcp': ('127.0.0.1', 0)},  # Bind to an ephemeral port on loopback interface
+                "mem_limit": CONTAINER_MEM_LIMIT,
+                "nano_cpus": nano_cpus,
+                "user": CONTAINER_USER,
+                "detach": True,
+                "auto_remove": True,
+                "working_dir": "/tmp",
+                "hostname": "sandbox",
+                "environment": {
                     "PROMPT_COMMAND": f"export PS1='{prompt}'",
                     "PS1": prompt,
                     "HOME": "/tmp"
                 }
-            )
+            }
+
+            if CONTAINER_STORAGE_LIMIT:
+                run_kwargs["storage_opt"] = {"size": CONTAINER_STORAGE_LIMIT}
+
+            try:
+                container = self.client.containers.run(**run_kwargs)
+            except docker.errors.APIError as api_err:
+                err_msg = str(api_err).lower()
+                if CONTAINER_STORAGE_LIMIT and any(keyword in err_msg for keyword in ["storage_opt", "storage-opt", "size limit", "quota"]):
+                    logger.warning(
+                        f"Docker storage limit ({CONTAINER_STORAGE_LIMIT}) is not supported by the host's current driver/filesystem configuration. "
+                        f"Falling back to starting container without storage constraints. Error: {api_err}"
+                    )
+                    run_kwargs.pop("storage_opt", None)
+                    container = self.client.containers.run(**run_kwargs)
+                else:
+                    raise api_err
+
             
             # Refresh details from API to fetch assigned host port mapping
             container.reload()

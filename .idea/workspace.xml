@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="Added custom app to docker image and made app use the image">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated dockerfile">
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/container_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/container_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +20,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/leoneltrich/user-eval-platform.git",
+    "accountId": "5a4f28e6-41bd-4703-beb3-f4825cfa1e0f"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8,
   &quot;fromUser&quot;: false
@@ -70,7 +75,7 @@
       <workItem from="1781448443761" duration="90000" />
       <workItem from="1781626840603" duration="10701000" />
       <workItem from="1781801300637" duration="18328000" />
-      <workItem from="1782036636898" duration="8910000" />
+      <workItem from="1782036636898" duration="9225000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -376,14 +381,21 @@
       <option name="project" value="LOCAL" />
       <updated>1781785160450</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="updated dockerfile">
+      <option name="closed" value="true" />
+      <created>1782057163582</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1782057163582</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="revised strict email checks" />
     <MESSAGE value="revised user badge" />
     <MESSAGE value="updated to include email prefix in shell" />
     <MESSAGE value="Added tasks for eval" />
@@ -408,7 +420,8 @@
     <MESSAGE value="Updated questions and report" />
     <MESSAGE value="fixed abandoned  bug" />
     <MESSAGE value="Added custom app to docker image and made app use the image" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added custom app to docker image and made app use the image" />
+    <MESSAGE value="updated dockerfile" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated dockerfile" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

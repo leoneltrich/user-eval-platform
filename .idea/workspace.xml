@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated tasks">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="updated tasks and dockerfile and verify">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/verify.sh" beforeDir="false" afterPath="$PROJECT_DIR$/verify.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,15 +81,7 @@
       <workItem from="1781448443761" duration="90000" />
       <workItem from="1781626840603" duration="10701000" />
       <workItem from="1781801300637" duration="18328000" />
-      <workItem from="1782036636898" duration="22385000" />
-    </task>
-    <task id="LOCAL-00003" summary="fixed terminal issues">
-      <option name="closed" value="true" />
-      <created>1781311559876</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1781311559876</updated>
+      <workItem from="1782036636898" duration="23097000" />
     </task>
     <task id="LOCAL-00004" summary="Removed gvisor hints">
       <option name="closed" value="true" />
@@ -477,7 +467,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782082512574</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="updated tasks and dockerfile and verify">
+      <option name="closed" value="true" />
+      <created>1782082982040</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1782082982040</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -495,7 +493,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added report export" />
     <MESSAGE value="security additions" />
     <MESSAGE value="revised report" />
     <MESSAGE value="styling updates" />
@@ -520,7 +517,8 @@
     <MESSAGE value="fixed terminal sizing issue" />
     <MESSAGE value="added tasks" />
     <MESSAGE value="updated tasks" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated tasks" />
+    <MESSAGE value="updated tasks and dockerfile and verify" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated tasks and dockerfile and verify" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

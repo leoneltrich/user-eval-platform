@@ -7,21 +7,21 @@
     {
       "id": 1,
       "title": "Create duplicate",
-      "scenario": "In your current location there is a folder called data (Source path: /tmp/data). Your task is to create an exact copy of the folder and all it's contents, in the misc directory (Destination path: /tmp/misc).\n\nTo use the tool: command-finder query \"your query\"",
+      "scenario": "In your current location there is a folder called data (/tmp/data). Your task is to create an exact copy of the folder and all it's contents, in the misc directory (/tmp/misc).\n\nTo use the tool: command-finder query \"your query\"",
       "command": "verify.sh 1",
       "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
     },
     {
       "id": 2,
       "title": "Backup!",
-      "scenario": "You have important data that you need to create a safety copy of, in a file called benchmark (Source path: /tmp/results/benchmark). However there is already some data in the backup directory and you want to make sure the new data is only added to the directory if the data in the destination (Destination path: /tmp/backup) is older!\n\nTo use the tool: command-finder query \"your query\"",
+      "scenario": "You have important data that you need to create a safety copy of, in a file called benchmark (/tmp/results/benchmark). However there is already some data in the backup directory and you want to make sure the copy in (/tmp/backup) is numbered!\n\nTo use the tool: command-finder query \"your query\"",
       "command": "verify.sh 2",
-      "solution": "cp --update=older /tmp/results/benchmark /tmp/backup\n NOTE: Other command options may have also been correct in this scenario."
+      "solution": "cp --backup=numbered /tmp/results/benchmark /tmp/backup\n NOTE: Other command options may have also been correct in this scenario."
     },
     {
       "id": 3,
       "title": "Out of the way",
-      "scenario": "There is a file called numbers.txt in your current directory (Source path: /tmp/numbers.txt). Your job is to get this file into the misc (Destination path: /tmp/misc) directory, updating any existing numbers.txt files in this directory.\n\nTo use the tool: command-finder query \"your query\"",
+      "scenario": "There is a file called numbers.txt in your current directory (/tmp/numbers.txt). Your job is to get this file into the misc (/tmp/misc) directory, updating any existing numbers.txt files in this directory.\n\nTo use the tool: command-finder query \"your query\"",
       "command": "verify.sh 3",
       "solution": "mv --update=all /tmp/numbers.txt /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
     },

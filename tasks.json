@@ -26,21 +26,21 @@
       "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
     },
     {
-      "id": ,
+      "id": 4,
       "title": "Environment Initialization",
       "scenario": "Your goal is to prepare your current folder for a production environment. Use the tool to create a new, secure production setup file in this directory. Once the file is created with the correct secure and production settings, you can run the verifier to check your work.",
       "command": "verify.sh 4",
       "solution": "ops-sync --genesis -m:secure --env prod"
     },
     {
-      "id": 2,
+      "id": 5,
       "title": "Legacy Payload Injection",
       "scenario": "There is an existing file in your directory named data.txt. You need to use the tool to add a legacy version marker to the very end of this file. Make sure you also trigger the tool's header rotation feature during this process so the file updates correctly without any errors or lost data.",
       "command": "verify.sh 5",
       "solution": "ops-sync --append data.txt --stream legacy-v2 --force-rotate"
     },
     {
-      "id": 3,
+      "id": 6,
       "title": "Data Sanitization",
       "scenario": "You need to clean up sensitive data inside the existing data.txt file by removing any lines that contain the word \"PASSWORD\". Use the tool to perform this cleanup directly inside the file, and make sure to point the tool's required export pipeline flag to a new log file named clean.log so the system can record that the cleanup took place.",
       "command": "verify.sh 6",

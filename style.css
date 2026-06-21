@@ -404,6 +404,8 @@ header.main-header .app-subtitle {
   padding: 16px;
   overflow: hidden;
   background-color: #0f0f15;  /* Traditional deep black console background */
+  display: flex;
+  flex-direction: column;
 }
 
 #terminal {

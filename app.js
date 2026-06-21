@@ -505,11 +505,16 @@ async function initTerminalSession() {
     term.open(document.getElementById('terminal'));
     fitAddon.fit();
     
-    // Resize notification handler
-    window.addEventListener('resize', () => {
-        fitAddon.fit();
-        sendResize(term.cols, term.rows);
+    // Resize notification handler using ResizeObserver to handle CSS transitions and window resizes
+    const resizeObserver = new ResizeObserver(() => {
+        if (term && fitAddon) {
+            fitAddon.fit();
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                sendResize(term.cols, term.rows);
+            }
+        }
     });
+    resizeObserver.observe(document.getElementById('terminal-wrapper'));
 
     console.log('=== Ephemeral Sandbox Orchestrator ===');
     console.log('Contacting container allocation manager...');
@@ -544,6 +549,11 @@ async function initTerminalSession() {
         }
         document.getElementById('main-workspace').style.display = 'flex';
         document.querySelector('.main-header').style.display = 'flex';
+        
+        // Recalculate terminal layout size now that containers are visible
+        if (fitAddon) {
+            fitAddon.fit();
+        }
         
         // Resume task and question indices loaded from database
         currentTaskIndex = data.current_task_index || 0;

@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="Added container storage limit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.json" afterDir="false" />
-    </list>
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="fixed task duration tracking" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -82,7 +78,7 @@
       <workItem from="1781448443761" duration="90000" />
       <workItem from="1781626840603" duration="10701000" />
       <workItem from="1781801300637" duration="18328000" />
-      <workItem from="1782036636898" duration="10560000" />
+      <workItem from="1782036636898" duration="10866000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -404,15 +400,29 @@
       <option name="project" value="LOCAL" />
       <updated>1782057382884</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="bug fix and introduction">
+      <option name="closed" value="true" />
+      <created>1782058791048</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1782058791048</updated>
+    </task>
+    <task id="LOCAL-00042" summary="fixed task duration tracking">
+      <option name="closed" value="true" />
+      <created>1782058899604</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1782058899604</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated to include email prefix in shell" />
-    <MESSAGE value="Added tasks for eval" />
     <MESSAGE value="Revised end screen and next button" />
     <MESSAGE value="redesigned exit screen" />
     <MESSAGE value="added questions after tasks" />
@@ -436,7 +446,9 @@
     <MESSAGE value="Added custom app to docker image and made app use the image" />
     <MESSAGE value="updated dockerfile" />
     <MESSAGE value="Added container storage limit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added container storage limit" />
+    <MESSAGE value="bug fix and introduction" />
+    <MESSAGE value="fixed task duration tracking" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed task duration tracking" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

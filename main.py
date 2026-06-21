@@ -395,6 +395,17 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
                                                             await db_manager.add_task_duration(email, task_id, elapsed)
                                                             await db_manager.finalize_task(email, task_id)
                                                             logger.info(f"Saved completed task {task_id} active duration and finalized: {elapsed}s")
+                                                            
+                                                            # Disable active timer tracking if the completed task is the final simulation task
+                                                            try:
+                                                                with open("tasks.json", "r") as f:
+                                                                    tasks_cfg = json.load(f)
+                                                                max_task_id = max(t["id"] for t in tasks_cfg.get("tasks", []))
+                                                                if task_id >= max_task_id:
+                                                                    is_eval_active = False
+                                                                    logger.info(f"Final task {task_id} completed. Active timer tracking disabled.")
+                                                            except Exception as ce:
+                                                                logger.warning(f"Could not determine max task ID on completion check: {ce}")
                                                         last_active_start = time.time()
                                         except Exception as e:
                                             logger.error(f"Error handling telemetry signal: {e}")

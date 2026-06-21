@@ -120,6 +120,7 @@ function renderIntroduction() {
 
     document.getElementById('start-evaluation-btn').addEventListener('click', () => {
         hasSeenIntro = true;
+        sendTelemetryEvent('evaluation_start', 1);
         quizMode = 'tasks';
         renderTask();
     });

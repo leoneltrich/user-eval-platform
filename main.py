@@ -291,6 +291,17 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
     last_active_start = time.time()
     is_tab_active = True
     
+    # Initialize evaluation tracking state: inactive if user is on the first task (reading intro)
+    is_eval_active = True
+    if email:
+        try:
+            user_data = await db_manager.get_or_create_user(email)
+            if user_data.get("current_task_index", 0) == 0:
+                is_eval_active = False
+        except Exception as e:
+            logger.error(f"Failed to resolve initial tracking state for user {email}: {e}")
+
+    
     # 2. Extract and negotiate the correct websocket subprotocol (usually 'tty')
     client_subprotocols = websocket.headers.get("sec-websocket-protocol", "")
     subprotocols = [s.strip() for s in client_subprotocols.split(",") if s.strip()]
@@ -333,7 +344,7 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
 
                     # Forward messages from the client to the internal container
                     async def forward_to_target():
-                        nonlocal last_active_start, is_tab_active
+                        nonlocal last_active_start, is_tab_active, is_eval_active
                         try:
                             while True:
                                 data = await websocket.receive()
@@ -353,7 +364,7 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
                                                 if is_tab_active:
                                                     elapsed = int(time.time() - last_active_start)
                                                     current_task_id = signal.get("task_id", 0)
-                                                    if email and current_task_id > 0:
+                                                    if email and current_task_id > 0 and is_eval_active:
                                                         await db_manager.add_task_duration(email, current_task_id, elapsed)
                                                     is_tab_active = False
                                                     logger.info(f"User {email} tab went inactive. Logged segment: {elapsed}s")
@@ -371,10 +382,16 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
                                                     await db_manager.log_telemetry_event(email, task_id, event_type)
                                                     logger.info(f"Logged telemetry event '{event_type}' for user {email} on task {task_id}")
                                                     
+                                                    # Handle evaluation start to begin tracking
+                                                    if event_type == "evaluation_start":
+                                                        is_eval_active = True
+                                                        last_active_start = time.time()
+                                                        logger.info(f"Evaluation started for user {email}. Active timer initialized.")
+                                                    
                                                     # Track active duration on task completion
-                                                    if event_type == "task_complete" and is_tab_active:
+                                                    elif event_type == "task_complete" and is_tab_active:
                                                         elapsed = int(time.time() - last_active_start)
-                                                        if task_id and task_id > 0:
+                                                        if task_id and task_id > 0 and is_eval_active:
                                                             await db_manager.add_task_duration(email, task_id, elapsed)
                                                             await db_manager.finalize_task(email, task_id)
                                                             logger.info(f"Saved completed task {task_id} active duration and finalized: {elapsed}s")
@@ -421,7 +438,7 @@ async def websocket_proxy(websocket: WebSocket, session_id: str):
 
     finally:
         # Finalize active duration on disconnect if tab was active
-        if email and is_tab_active:
+        if email and is_tab_active and is_eval_active:
             elapsed = int(time.time() - last_active_start)
             try:
                 user_data = await db_manager.get_or_create_user(email)

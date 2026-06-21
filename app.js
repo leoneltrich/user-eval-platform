@@ -524,11 +524,26 @@ async function initTerminalSession() {
         });
         
         if (!response.ok) {
-            throw new Error(`Start-session returned HTTP status ${response.status}`);
+            let errMsg = `Start-session returned HTTP status ${response.status}`;
+            try {
+                const errData = await response.json();
+                if (errData && errData.detail) {
+                    errMsg = errData.detail;
+                }
+            } catch (e) {}
+            throw new Error(errMsg);
         }
         
         const data = await response.json();
         terminalSessionId = data.session_id;
+        
+        // Hide modal and show evaluation interface
+        const emailModal = document.getElementById('email-modal');
+        if (emailModal) {
+            emailModal.style.display = 'none';
+        }
+        document.getElementById('main-workspace').style.display = 'flex';
+        document.querySelector('.main-header').style.display = 'flex';
         
         // Resume task and question indices loaded from database
         currentTaskIndex = data.current_task_index || 0;
@@ -548,15 +563,26 @@ async function initTerminalSession() {
             }
         }
         
-        console.log(`Container started. Session ID: ${terminalSessionId}`);
-        console.log('Establishing WebSocket proxy tunnel...');
-        
-        // Connect websocket proxy
-        connectWebSocket(terminalSessionId);
+        if (quizMode !== 'complete') {
+            console.log(`Container started. Session ID: ${terminalSessionId}`);
+            console.log('Establishing WebSocket proxy tunnel...');
+            
+            // Connect websocket proxy
+            connectWebSocket(terminalSessionId);
+        } else {
+            console.log("Evaluation already completed. Skipping WebSocket tunnel.");
+        }
         
     } catch (err) {
-        term.writeln(`\x1b[31mInitialization Error: ${err.message}\x1b[0m`);
-        updateStatus('disconnected', 'Sandbox Error');
+        console.error("Initialization Error:", err.message);
+        
+        // Clear local storage and email session
+        localStorage.removeItem('user_email');
+        userEmail = null;
+        document.getElementById('user-email-display').textContent = '';
+        
+        // Show validation error on the login modal directly
+        resetModalState(err.message);
     }
 }
 
@@ -575,7 +601,9 @@ function connectWebSocket(sessionId) {
         socket.send(JSON.stringify({ AuthToken: "" }));
         
         // Send initial resize packet: '1' prefix
-        sendResize(term.cols, term.rows);
+        if (term) {
+            sendResize(term.cols, term.rows);
+        }
     };
     
     socket.onmessage = (event) => {
@@ -584,7 +612,9 @@ function connectWebSocket(sessionId) {
     
     socket.onclose = () => {
         updateStatus('disconnected', 'Disconnected');
-        term.writeln('\r\n\x1b[31mSandbox connection lost. Container has been vaporized.\x1b[0m');
+        if (term) {
+            term.writeln('\r\n\x1b[31mSandbox connection lost. Container has been vaporized.\x1b[0m');
+        }
     };
     
     socket.onerror = (err) => {
@@ -592,28 +622,31 @@ function connectWebSocket(sessionId) {
     };
     
     // Intercept client keystrokes: prefix with '0' (ttyd input packet type)
-    term.onData(data => {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            const safeData = data.length > 8192 ? data.substring(0, 8192) : data;
-            socket.send('0' + safeData);
-        }
-    });
-
-    // Handle binary input pasting: prefix with '0'
-    term.onBinary(data => {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            const safeLength = Math.min(data.length, 8192);
-            const buffer = new Uint8Array(safeLength + 1);
-            buffer[0] = 48; // ASCII for '0'
-            for (let i = 0; i < safeLength; i++) {
-                buffer[i + 1] = data.charCodeAt(i);
+    if (term) {
+        term.onData(data => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const safeData = data.length > 8192 ? data.substring(0, 8192) : data;
+                socket.send('0' + safeData);
             }
-            socket.send(buffer);
-        }
-    });
+        });
+
+        // Handle binary input pasting: prefix with '0'
+        term.onBinary(data => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const safeLength = Math.min(data.length, 8192);
+                const buffer = new Uint8Array(safeLength + 1);
+                buffer[0] = 48; // ASCII for '0'
+                for (let i = 0; i < safeLength; i++) {
+                    buffer[i + 1] = data.charCodeAt(i);
+                }
+                socket.send(buffer);
+            }
+        });
+    }
 }
 
 function handleServerMessage(data) {
+    if (!term) return;
     if (typeof data === 'string') {
         const type = data.charAt(0);
         const payload = data.slice(1);
@@ -649,6 +682,52 @@ function updateStatus(status, label) {
     statusText.textContent = displayLabel;
 }
 
+function showModalLoading(email) {
+    const emailModal = document.getElementById('email-modal');
+    const emailInput = document.getElementById('email-input');
+    const submitBtn = document.getElementById('submit-email-btn');
+    const errorMsg = document.getElementById('email-error-msg');
+    
+    if (errorMsg) errorMsg.style.display = 'none';
+    if (emailInput) {
+        emailInput.value = email;
+        emailInput.disabled = true;
+    }
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Connecting...';
+    }
+    if (emailModal) {
+        emailModal.style.display = 'flex';
+    }
+}
+
+function resetModalState(error = null) {
+    const emailModal = document.getElementById('email-modal');
+    const emailInput = document.getElementById('email-input');
+    const submitBtn = document.getElementById('submit-email-btn');
+    const errorMsg = document.getElementById('email-error-msg');
+    
+    if (emailInput) {
+        emailInput.disabled = false;
+    }
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Start Session';
+    }
+    if (errorMsg) {
+        if (error) {
+            errorMsg.textContent = error;
+            errorMsg.style.display = 'block';
+        } else {
+            errorMsg.style.display = 'none';
+        }
+    }
+    if (emailModal) {
+        emailModal.style.display = 'flex';
+    }
+}
+
 // User Email Check & Modal Handlers
 function checkUserEmail() {
     const emailModal = document.getElementById('email-modal');
@@ -661,7 +740,7 @@ function checkUserEmail() {
         e.preventDefault();
         const enteredEmail = emailInput.value.trim();
         if (validateEmail(enteredEmail)) {
-            emailModal.style.display = 'none';
+            showModalLoading(enteredEmail);
             setUserEmail(enteredEmail);
         } else {
             alert('Please enter a valid email address.');
@@ -682,10 +761,11 @@ function checkUserEmail() {
     }
 
     if (email && validateEmail(email)) {
+        showModalLoading(email);
         setUserEmail(email);
     } else {
         // 3. Show prompt modal
-        emailModal.style.display = 'flex';
+        resetModalState(null);
     }
 
     // Clicking the email display resets email preference (acting as logout/change email)
@@ -693,6 +773,10 @@ function checkUserEmail() {
         localStorage.removeItem('user_email');
         userEmail = null;
         emailDisplay.textContent = '';
+        
+        // Hide evaluation interface
+        document.getElementById('main-workspace').style.display = 'none';
+        document.querySelector('.main-header').style.display = 'none';
         
         // Disconnect and clean up current session
         if (socket) {
@@ -705,7 +789,7 @@ function checkUserEmail() {
         }
         
         emailInput.value = '';
-        emailModal.style.display = 'flex';
+        resetModalState(null);
     });
 }
 

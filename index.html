@@ -18,13 +18,13 @@
 <body>
 
     <!-- Main Header -->
-    <header class="main-header">
+    <header class="main-header" style="display: none;">
         <h1 id="app-title">Tool Evaluation</h1>
         <p class="app-subtitle">Natural Language-Based Command Option Retrieval</p>
     </header>
-
+ 
     <!-- Split Pane Workspace -->
-    <main class="split-container" id="main-workspace">
+    <main class="split-container" id="main-workspace" style="display: none;">
         
         <!-- Left Side: Interactive Quiz -->
         <section class="pane quiz-pane" aria-label="Interactive Quiz Pane" id="quiz-pane">
@@ -33,7 +33,7 @@
                 <p>Loading Quiz Module...</p>
             </div>
         </section>
-
+ 
         <!-- Right Side: gVisor Sandboxed Terminal -->
         <section class="pane terminal-pane" aria-label="Sandboxed Terminal Pane" id="terminal-pane">
             <div class="terminal-header" id="terminal-header">
@@ -49,11 +49,11 @@
                 <div id="terminal"></div>
             </div>
         </section>
-
+ 
     </main>
-
+ 
     <!-- Email Login Modal Overlay -->
-    <div class="modal-overlay" id="email-modal" style="display: none;">
+    <div class="modal-overlay" id="email-modal">
         <div class="modal-card">
             <div class="modal-header">
                 <h2>Enter Your Email</h2>
@@ -64,6 +64,7 @@
                     <input type="email" id="email-input" placeholder="name@provider.com" required autocomplete="email" maxlength="254">
                 </div>
                 <button type="submit" class="btn btn-primary btn-block" id="submit-email-btn">Start Session</button>
+                <div id="email-error-msg" style="color: #ef4444; font-size: 0.9rem; margin-top: 12px; font-weight: bold; text-align: center; display: none;"></div>
             </form>
         </div>
     </div>

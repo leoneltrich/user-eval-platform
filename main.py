@@ -40,6 +40,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def is_email_permitted(email: str) -> bool:
+    """Validate if the email is allowed to participate in the survey."""
+    import os
+    import re
+    file_path = "permitted_emails.txt"
+    if not os.path.exists(file_path):
+        return True  # If no file, all emails are permitted by default
+    try:
+        with open(file_path, "r") as f:
+            lines = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+    except Exception as e:
+        logger.error(f"Error reading permitted_emails.txt: {e}")
+        return True
+
+    if not lines:
+        return True
+
+    email_lower = email.lower().strip()
+    for pattern in lines:
+        pattern_lower = pattern.lower().strip()
+        # Case 1: Exact match
+        if email_lower == pattern_lower:
+            return True
+        # Case 2: Regex full match
+        try:
+            regex = re.compile(pattern, re.IGNORECASE)
+            if regex.fullmatch(email_lower):
+                return True
+        except re.error:
+            continue
+    return False
+
 class SessionStartRequest(BaseModel):
     email: str = Field(..., max_length=254)
 
@@ -52,6 +84,13 @@ class SessionStartResponse(BaseModel):
 @app.post("/api/start-session", response_model=SessionStartResponse, status_code=status.HTTP_201_CREATED)
 async def start_session(request: SessionStartRequest):
     """Endpoint to trigger the initialization of a new sandboxed container session."""
+    # Check if the email address is permitted to participate
+    if not is_email_permitted(request.email):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Email address is not permitted to participate in this evaluation."
+        )
+
     try:
         # 1. Compute SHA-256 hash of the email address (normalize to lowercase first)
         import hashlib

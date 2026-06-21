@@ -1,0 +1,17 @@
+# Permitted Emails List
+# Each non-empty line is treated either as a direct email address matching exactly,
+# or as a regular expression matching the full email address.
+# Lines starting with '#' are ignored.
+#
+# If this file does not exist or is empty, all emails are permitted by default.
+
+# Example 1: Exact matching email addresses
+student@university.edu
+developer@company.com
+
+# Example 2: Regex patterns (using standard regex syntax, matched case-insensitively)
+# Matches any email ending in @student.university.edu
+.*@student\.university\.edu
+
+# Matches any email ending in @partner.org or @partner.com
+.*@partner\.(org|com)

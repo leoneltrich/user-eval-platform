@@ -3,8 +3,8 @@
 TASK=$1
 
 if [[ -z "$TASK" ]]; then
-    echo "Usage: ./verify [1|2|3]"
-    echo "Example: ./verify 1"
+    echo "Usage: ./verify.sh [1|2|3|4|5|6]"
+    echo "Example: ./verify.sh 1"
     exit 1
 fi
 
@@ -13,6 +13,85 @@ echo "-------------------------------------"
 
 case $TASK in
     1)
+        # Task 1: Create duplicate of /tmp/data in /tmp/misc
+        if [ ! -d "/tmp/misc/data" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: Directory '/tmp/misc/data' was not found."
+            exit 1
+        fi
+
+        if [ ! -f "/tmp/misc/data/file1.txt" ] || [ ! -f "/tmp/misc/data/sub/file2.txt" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: Missing files in the duplicated directory."
+            exit 1
+        fi
+
+        # Check content is not empty or corrupted
+        CONTENT1=$(cat /tmp/misc/data/file1.txt 2>/dev/null)
+        CONTENT2=$(cat /tmp/misc/data/sub/file2.txt 2>/dev/null)
+        if [ "$CONTENT1" != "sample data stream" ] || [ "$CONTENT2" != "nested sample data" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: File contents inside the duplicate directory are incorrect."
+            exit 1
+        fi
+
+        echo "STATUS: SUCCESS"
+        echo "MESSAGE: Directory duplicate successfully created inside /tmp/misc."
+        ;;
+
+    2)
+        # Task 2: Backup /tmp/results/benchmark to /tmp/backup/ if destination is older
+        if [ ! -f "/tmp/backup/benchmark" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: '/tmp/backup/benchmark' does not exist."
+            exit 1
+        fi
+
+        # Verify the content has been updated
+        CONTENT=$(cat /tmp/backup/benchmark 2>/dev/null)
+        if [ "$CONTENT" != "new benchmark results v2" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: Destination file '/tmp/backup/benchmark' does not contain the updated benchmark data."
+            exit 1
+        fi
+
+        # Make sure source file was not deleted
+        if [ ! -f "/tmp/results/benchmark" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: Source file '/tmp/results/benchmark' is missing."
+            exit 1
+        fi
+
+        echo "STATUS: SUCCESS"
+        echo "MESSAGE: Benchmark successfully backed up to /tmp/backup/ with update constraints."
+        ;;
+
+    3)
+        # Task 3: Move numbers.txt from /tmp to /tmp/misc/ updating/overwriting existing
+        if [ -f "/tmp/numbers.txt" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: 'numbers.txt' still exists in /tmp. It should be moved, not copied."
+            exit 1
+        fi
+
+        if [ ! -f "/tmp/misc/numbers.txt" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: 'numbers.txt' was not found in /tmp/misc."
+            exit 1
+        fi
+
+        CONTENT=$(cat /tmp/misc/numbers.txt 2>/dev/null)
+        if [ "$CONTENT" != "987654321" ]; then
+            echo "STATUS: FAILED"
+            echo "ERROR: 'numbers.txt' in /tmp/misc was not updated/overwritten with the new content."
+            exit 1
+        fi
+
+        echo "STATUS: SUCCESS"
+        echo "MESSAGE: 'numbers.txt' successfully moved and updated."
+        ;;
+
+    4)
         if [ ! -f ".ops-lock" ]; then
             echo "STATUS: FAILED"
             echo "ERROR: Target state origin file '.ops-lock' was not found in the current directory."
@@ -35,7 +114,7 @@ case $TASK in
         fi
         ;;
 
-    2)
+    5)
         if [ ! -f "data.txt" ]; then
             echo "STATUS: FAILED"
             echo "ERROR: Critical file 'data.txt' is missing from the workspace entirely."
@@ -56,7 +135,7 @@ case $TASK in
         fi
         ;;
 
-    3)
+    6)
         if [ ! -f "clean.log" ]; then
             echo "STATUS: FAILED"
             echo "ERROR: Pipeline export log 'clean.log' was not generated."
@@ -85,7 +164,7 @@ case $TASK in
         ;;
 
     *)
-        echo "Invalid task selection. Please use choose 1, 2, or 3."
+        echo "Invalid task selection. Please choose 1, 2, 3, 4, 5, or 6."
         exit 1
         ;;
 esac

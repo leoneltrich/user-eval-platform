@@ -16,14 +16,14 @@
       "title": "Backup!",
       "scenario": "You have important data that you need to create a safety copy of, in a file called benchmark (/tmp/results/benchmark). However there is already some data in the backup directory and you want to make sure the new data is only added to the directory if the data in the destination (/tmp/backup) is older!",
       "command": "verify.sh 2",
-      "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
+      "solution": "cp --update=older /tmp/results/benchmark /tmp/backup\n NOTE: Other command options may have also been correct in this scenario."
     },
     {
       "id": 3,
       "title": "Out of the way",
       "scenario": "There is a file called numbers.txt in your current directory (/tmp/numbers.txt). Your job is to get this file into the misc (/tmp/misc) directory, updating any existing numbers.txt files in this directory.",
       "command": "verify.sh 3",
-      "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
+      "solution": "mv --update=all /tmp/numbers.txt /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
     },
     {
       "id": 4,

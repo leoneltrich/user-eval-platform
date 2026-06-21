@@ -8,6 +8,14 @@ WORKDIR /tmp
 # Copy the pre-compiled binary and verification script into the image
 COPY ops-sync /usr/local/bin/ops-sync
 COPY verify.sh /usr/local/bin/verify.sh
+COPY command-finder /usr/local/bin/command-finder
+COPY models /usr/share/command-finder/models
+COPY local_assistant.db /var/lib/command-finder/local_assistant.db
+
+RUN chmod 777 /var/lib/command-finder
+RUN chmod 666 /var/lib/command-finder/local_assistant.db
+
+ENV DATABASE_PATH=/var/lib/command-finder/local_assistant.db
 
 # Ensure both files have execution permissions
 RUN chmod +x /usr/local/bin/ops-sync /usr/local/bin/verify.sh

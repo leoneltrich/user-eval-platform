@@ -6,23 +6,44 @@
   "tasks": [
     {
       "id": 1,
+      "title": "Create duplicate",
+      "scenario": "In your current location (directory) there is a folder called data. Your task is to create a duplicate of this folder and all folders and files contained in it, in the misc directory at /tmp/misc",
+      "command": "verify.sh 1",
+      "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
+    },
+    {
+      "id": 2,
+      "title": "Backup!",
+      "scenario": "You have a bunch of important data that you need to create a safety copy of in the results directory (/tmp/results). However there is already some data in the backup directory and you want to make sure the new data is only added to the directory if the data in the destination is older!",
+      "command": "verify.sh 2",
+      "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
+    },
+    {
+      "id": 3,
+      "title": "Out of the way",
+      "scenario": "There is a file called numbers.txt in your current directory (/tmp/numbers.txt). Your job is to get this file into the misc (/tmp/misc) directory, updating any existing numbers.txt files in this directory.",
+      "command": "verify.sh 3",
+      "solution": "cp -r /tmp/data /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
+    },
+    {
+      "id": ,
       "title": "Environment Initialization",
       "scenario": "Your goal is to prepare your current folder for a production environment. Use the tool to create a new, secure production setup file in this directory. Once the file is created with the correct secure and production settings, you can run the verifier to check your work.",
-      "command": "verify.sh 1",
+      "command": "verify.sh 4",
       "solution": "ops-sync --genesis -m:secure --env prod"
     },
     {
       "id": 2,
       "title": "Legacy Payload Injection",
       "scenario": "There is an existing file in your directory named data.txt. You need to use the tool to add a legacy version marker to the very end of this file. Make sure you also trigger the tool's header rotation feature during this process so the file updates correctly without any errors or lost data.",
-      "command": "verify.sh 2",
+      "command": "verify.sh 5",
       "solution": "ops-sync --append data.txt --stream legacy-v2 --force-rotate"
     },
     {
       "id": 3,
       "title": "Data Sanitization",
       "scenario": "You need to clean up sensitive data inside the existing data.txt file by removing any lines that contain the word \"PASSWORD\". Use the tool to perform this cleanup directly inside the file, and make sure to point the tool's required export pipeline flag to a new log file named clean.log so the system can record that the cleanup took place.",
-      "command": "verify.sh 3",
+      "command": "verify.sh 6",
       "solution": "ops-sync -s data.txt -x clean.log --scrub \"PASSWORD\""
     }
   ],

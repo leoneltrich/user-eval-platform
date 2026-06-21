@@ -109,9 +109,7 @@ function renderIntroduction() {
         <div class="quiz-question-number">Introduction</div>
         <h2 class="quiz-question-text" id="question-text">${introduction.title}</h2>
         
-        <p class="feedback-text" style="line-height: 1.6; margin-bottom: 24px;">
-            ${introduction.content}
-        </p>
+        <p class="feedback-text" style="line-height: 1.6; margin-bottom: 24px;">${introduction.content}</p>
 
         <div class="quiz-footer" style="justify-content: flex-end; margin-top: auto;">
             <button class="btn btn-primary" id="start-evaluation-btn">Start Evaluation</button>
@@ -142,9 +140,7 @@ function renderTask() {
             <div class="quiz-question-number">All Simulation Tasks Completed!</div>
             <h2 class="quiz-question-text">Congratulations!</h2>
             
-            <p class="feedback-text">
-                You have successfully completed all simulation scenarios. Before proceeding to the survey questionnaire, you can review the solution for the final task.
-            </p>
+            <p class="feedback-text">You have successfully completed all simulation scenarios. Before proceeding to the survey questionnaire, you can review the solution for the final task.</p>
 
             <div id="solution-container"></div>
 
@@ -200,9 +196,7 @@ function renderTask() {
         <div class="quiz-question-number">Task ${currentTaskIndex + 1} of ${tasks.length}</div>
         <h2 class="quiz-question-text" id="question-text">${taskData.title}</h2>
         
-        <p class="feedback-text">
-            ${taskData.scenario}
-        </p>
+        <p class="feedback-text">${taskData.scenario}</p>
 
         <div class="command-box">
             <div class="command-text" id="command-text">${taskData.command}</div>
@@ -476,9 +470,7 @@ function renderResults() {
             </div>
             <div class="results-badge">Evaluation Completed</div>
             <h2 class="results-title">Thank You!</h2>
-            <p class="feedback-text">
-                You have successfully completed all simulation scenarios. Your progress and environment telemetry have been securely saved.
-            </p>
+            <p class="feedback-text">You have successfully completed all simulation scenarios. Your progress and environment telemetry have been securely saved.</p>
             <div class="completion-banner">
                 <svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>

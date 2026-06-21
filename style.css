@@ -819,6 +819,7 @@ header.main-header .app-subtitle {
   opacity: 0.95;
   line-height: 1.5;
   margin-bottom: 20px;
+  white-space: pre-wrap;
 }
 
 .survey-content-wrapper {

@@ -1,4 +1,8 @@
 {
+  "introduction": {
+    "title": "Welcome to the Local Assistant Evaluation",
+    "content": "This evaluation is designed to measure the usability and effectiveness of the local command option assistant. You will be asked to complete 3 shell scenarios using the sandboxed terminal. Please read the task description in this side panel and use the terminal on the right to complete them. Click the button below to start."
+  },
   "tasks": [
     {
       "id": 1,

@@ -5,6 +5,9 @@ let currentTaskIndex = 0;
 let currentQuestionIndex = 0;
 let quizMode = 'tasks'; // 'tasks' | 'survey' | 'complete'
 let surveyAnswers = []; // to store collected survey responses locally in-memory
+let introduction = null;
+let hasSeenIntro = false;
+
 
 let terminalSessionId = null;
 let socket = null;
@@ -43,16 +46,25 @@ async function initQuiz() {
         if (data && data.tasks) {
             tasks = data.tasks;
             surveyQuestions = data.questions || [];
+            introduction = data.introduction || null;
         } else {
             tasks = data || [];
             surveyQuestions = [];
+            introduction = null;
         }
-        renderTask();
+        
+        if (currentTaskIndex === 0 && introduction && !hasSeenIntro) {
+            quizMode = 'introduction';
+            renderIntroduction();
+        } else {
+            renderTask();
+        }
     } catch (err) {
         console.error("Error loading tasks configuration:", err);
         quizCard.innerHTML = `<p style="color: #ef4444; font-weight: bold;">Error loading tasks: ${err.message}</p>`;
     }
 }
+
 
 // Telemetry and Progress Sync Helpers
 async function saveProgress(finalizeTaskId = null) {
@@ -81,6 +93,36 @@ function sendTelemetryEvent(eventType, taskId) {
         });
         socket.send('2' + payload);
     }
+}
+
+function renderIntroduction() {
+    if (!introduction) {
+        quizMode = 'tasks';
+        renderTask();
+        return;
+    }
+
+    quizCard.innerHTML = `
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 0%"></div>
+        </div>
+        <div class="quiz-question-number">Introduction</div>
+        <h2 class="quiz-question-text" id="question-text">${introduction.title}</h2>
+        
+        <p class="feedback-text" style="line-height: 1.6; margin-bottom: 24px;">
+            ${introduction.content}
+        </p>
+
+        <div class="quiz-footer" style="justify-content: flex-end; margin-top: auto;">
+            <button class="btn btn-primary" id="start-evaluation-btn">Start Evaluation</button>
+        </div>
+    `;
+
+    document.getElementById('start-evaluation-btn').addEventListener('click', () => {
+        hasSeenIntro = true;
+        quizMode = 'tasks';
+        renderTask();
+    });
 }
 
 function renderTask() {
@@ -504,6 +546,9 @@ async function initTerminalSession() {
             if (currentTaskIndex >= tasks.length) {
                 quizMode = 'survey';
                 renderSurvey();
+            } else if (currentTaskIndex === 0 && introduction && !hasSeenIntro) {
+                quizMode = 'introduction';
+                renderIntroduction();
             } else {
                 quizMode = 'tasks';
                 renderTask();
@@ -618,6 +663,18 @@ function checkUserEmail() {
     const emailInput = document.getElementById('email-input');
     const emailDisplay = document.getElementById('user-email-display');
 
+    // Register submit listener unconditionally so form submissions are always handled by JS
+    emailForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const enteredEmail = emailInput.value.trim();
+        if (validateEmail(enteredEmail)) {
+            emailModal.style.display = 'none';
+            setUserEmail(enteredEmail);
+        } else {
+            alert('Please enter a valid email address.');
+        }
+    });
+
     // 1. Try to extract from URL params (?email=...)
     const urlParams = new URLSearchParams(window.location.search);
     let email = urlParams.get('email');
@@ -636,16 +693,6 @@ function checkUserEmail() {
     } else {
         // 3. Show prompt modal
         emailModal.style.display = 'flex';
-        emailForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const enteredEmail = emailInput.value.trim();
-            if (validateEmail(enteredEmail)) {
-                emailModal.style.display = 'none';
-                setUserEmail(enteredEmail);
-            } else {
-                alert('Please enter a valid email address.');
-            }
-        });
     }
 
     // Clicking the email display resets email preference (acting as logout/change email)

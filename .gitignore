@@ -1,3 +1,4 @@
 *.db*
 command-finder
 /models
+emails.txt

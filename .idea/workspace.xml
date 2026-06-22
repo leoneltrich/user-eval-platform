@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="Updated intro">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="email hasher script">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/permitted_emails.txt" beforeDir="false" afterPath="$PROJECT_DIR$/permitted_emails.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,26 +42,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/sandbox-noadmin/PycharmProjects/sentences-user-survey-platform&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.hash_emails.executor": "Run",
+    "Python.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "last_opened_file_path": "/home/sandbox-noadmin/PycharmProjects/sentences-user-survey-platform",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -80,23 +88,7 @@
       <workItem from="1781448443761" duration="90000" />
       <workItem from="1781626840603" duration="10701000" />
       <workItem from="1781801300637" duration="18328000" />
-      <workItem from="1782036636898" duration="30065000" />
-    </task>
-    <task id="LOCAL-00009" summary="docker rootless resilience">
-      <option name="closed" value="true" />
-      <created>1781314510261</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1781314510261</updated>
-    </task>
-    <task id="LOCAL-00010" summary="updated networking security">
-      <option name="closed" value="true" />
-      <created>1781356540089</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1781356540089</updated>
+      <workItem from="1782036636898" duration="31668000" />
     </task>
     <task id="LOCAL-00011" summary="Initial mail tracking">
       <option name="closed" value="true" />
@@ -474,7 +466,23 @@
       <option name="project" value="LOCAL" />
       <updated>1782133585665</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="allow hashes to be stored in the permitted mails instead of plaintext">
+      <option name="closed" value="true" />
+      <created>1782135444224</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1782135444224</updated>
+    </task>
+    <task id="LOCAL-00059" summary="email hasher script">
+      <option name="closed" value="true" />
+      <created>1782135559878</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1782135559878</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -492,8 +500,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="styling" />
-    <MESSAGE value="formatting" />
     <MESSAGE value="fixed timing issues" />
     <MESSAGE value="revised report template" />
     <MESSAGE value="removed favicon" />
@@ -517,14 +523,16 @@
     <MESSAGE value="updated tasks file and verify script" />
     <MESSAGE value="Updated texts, and ressources" />
     <MESSAGE value="Updated intro" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated intro" />
+    <MESSAGE value="allow hashes to be stored in the permitted mails instead of plaintext" />
+    <MESSAGE value="email hasher script" />
+    <option name="LAST_COMMIT_MESSAGE" value="email hasher script" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>85</line>
+          <line>100</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
@@ -532,5 +540,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/sentences_user_survey_platform$main.coverage" NAME="main Coverage Results" MODIFIED="1781627156042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sentences_user_survey_platform$hash_emails.coverage" NAME="hash_emails Coverage Results" MODIFIED="1782135620719" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

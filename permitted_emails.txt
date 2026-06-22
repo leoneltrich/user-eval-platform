@@ -15,3 +15,8 @@ developer@company.com
 
 # Matches any email ending in @partner.org or @partner.com
 .*@partner\.(org|com)
+
+# Example 3: SHA-256 hashes of normalized emails
+# Store the 64-character hexadecimal SHA-256 hash of the lowercased, stripped email.
+# Example below is the SHA-256 hash of "student@university.edu":
+# dac848e02e1c9d2f2b38f8303d7c5885e3cd57a536067fa2312b19280d96d2e6

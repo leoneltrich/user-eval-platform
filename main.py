@@ -44,6 +44,7 @@ def is_email_permitted(email: str) -> bool:
     """Validate if the email is allowed to participate in the survey."""
     import os
     import re
+    import hashlib
     file_path = "permitted_emails.txt"
     if not os.path.exists(file_path):
         return True  # If no file, all emails are permitted by default
@@ -58,12 +59,26 @@ def is_email_permitted(email: str) -> bool:
         return True
 
     email_lower = email.lower().strip()
+    email_hash = hashlib.sha256(email_lower.encode()).hexdigest()
+
+    # Regex to identify a 64-character hex string (SHA-256 format)
+    sha256_pattern = re.compile(r"^[0-9a-fA-F]{64}$")
+
     for pattern in lines:
-        pattern_lower = pattern.lower().strip()
-        # Case 1: Exact match
+        pattern_strip = pattern.strip()
+        
+        # Case 1: The line is a SHA-256 hash
+        if sha256_pattern.match(pattern_strip):
+            if email_hash == pattern_strip.lower():
+                return True
+            continue
+
+        # Case 2: Exact plaintext match
+        pattern_lower = pattern_strip.lower()
         if email_lower == pattern_lower:
             return True
-        # Case 2: Regex full match
+
+        # Case 3: Regex full match
         try:
             regex = re.compile(pattern, re.IGNORECASE)
             if regex.fullmatch(email_lower):

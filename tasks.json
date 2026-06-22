@@ -21,7 +21,7 @@
     {
       "id": 3,
       "title": "Out of the way",
-      "scenario": "There is a file called numbers.txt in your current directory (/tmp/numbers.txt). Your job is to get this file into the misc (/tmp/misc) directory, updating any existing numbers.txt files in this directory.\n\nTo use the tool: command-finder query \"your query\"",
+      "scenario": "There is a file called numbers.txt in your current directory (/tmp/numbers.txt). Your job is to get this file into the misc directory (/tmp/misc/numbers.txt), updating any existing numbers.txt files in this directory.\n\nTo use the tool: command-finder query \"your query\"",
       "command": "verify.sh 3",
       "solution": "mv --update=all /tmp/numbers.txt /tmp/misc\n NOTE: Other command options may have also been correct in this scenario."
     },

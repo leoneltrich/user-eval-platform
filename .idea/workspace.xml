@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="adjsutments">
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="usability fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,15 +87,7 @@
       <workItem from="1781448443761" duration="90000" />
       <workItem from="1781626840603" duration="10701000" />
       <workItem from="1781801300637" duration="18328000" />
-      <workItem from="1782036636898" duration="33745000" />
-    </task>
-    <task id="LOCAL-00012" summary="revised design">
-      <option name="closed" value="true" />
-      <created>1781359425773</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1781359425773</updated>
+      <workItem from="1782036636898" duration="38731000" />
     </task>
     <task id="LOCAL-00013" summary="revised strict email checks">
       <option name="closed" value="true" />
@@ -480,7 +473,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782137195412</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="usability fix">
+      <option name="closed" value="true" />
+      <created>1782139407418</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1782139407418</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -498,7 +499,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="revised report template" />
     <MESSAGE value="removed favicon" />
     <MESSAGE value="updated tasks and added readme" />
     <MESSAGE value="Updated questions and report" />
@@ -523,7 +523,8 @@
     <MESSAGE value="allow hashes to be stored in the permitted mails instead of plaintext" />
     <MESSAGE value="email hasher script" />
     <MESSAGE value="adjsutments" />
-    <option name="LAST_COMMIT_MESSAGE" value="adjsutments" />
+    <MESSAGE value="usability fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="usability fix" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

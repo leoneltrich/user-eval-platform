@@ -38,5 +38,6 @@ RUN echo "old benchmark results v1" > /tmp/backup/benchmark
 RUN echo "987654321" > /tmp/numbers.txt
 RUN echo "123" > /tmp/misc/numbers.txt
 
-# Ensure the permissions of the newly created files/folders
+# Ensure correct ownership and permissions for the non-root container user (UID 1000)
+RUN chown -R 1000:1000 /tmp/data /tmp/misc /tmp/results /tmp/backup /tmp/numbers.txt /tmp/data.txt
 RUN chmod -R 777 /tmp/data /tmp/misc /tmp/results /tmp/backup /tmp/numbers.txt /tmp/data.txt

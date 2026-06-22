@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="email hasher script">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="e1b14d8e-a238-4e7b-ac9e-7e87a156d685" name="Changes" comment="adjsutments">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/permitted_emails.txt" beforeDir="false" afterPath="$PROJECT_DIR$/permitted_emails.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,15 +86,7 @@
       <workItem from="1781448443761" duration="90000" />
       <workItem from="1781626840603" duration="10701000" />
       <workItem from="1781801300637" duration="18328000" />
-      <workItem from="1782036636898" duration="31668000" />
-    </task>
-    <task id="LOCAL-00011" summary="Initial mail tracking">
-      <option name="closed" value="true" />
-      <created>1781359200976</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1781359200976</updated>
+      <workItem from="1782036636898" duration="33745000" />
     </task>
     <task id="LOCAL-00012" summary="revised design">
       <option name="closed" value="true" />
@@ -482,7 +472,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782135559878</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="adjsutments">
+      <option name="closed" value="true" />
+      <created>1782137195412</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1782137195412</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -500,7 +498,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed timing issues" />
     <MESSAGE value="revised report template" />
     <MESSAGE value="removed favicon" />
     <MESSAGE value="updated tasks and added readme" />
@@ -525,7 +522,8 @@
     <MESSAGE value="Updated intro" />
     <MESSAGE value="allow hashes to be stored in the permitted mails instead of plaintext" />
     <MESSAGE value="email hasher script" />
-    <option name="LAST_COMMIT_MESSAGE" value="email hasher script" />
+    <MESSAGE value="adjsutments" />
+    <option name="LAST_COMMIT_MESSAGE" value="adjsutments" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

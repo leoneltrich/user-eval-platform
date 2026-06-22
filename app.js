@@ -503,6 +503,10 @@ function renderResults() {
 
 // Sandbox Provisioning & WebSocket Bridge Setup
 async function initTerminalSession() {
+    if (term) {
+        console.warn('Terminal session is already initialized or currently provisioning.');
+        return;
+    }
     updateStatus('connecting', 'Provisioning Sandbox...');
     
     // Initialize xterm.js
